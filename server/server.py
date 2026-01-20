@@ -10,14 +10,21 @@ from pathlib import Path
 
 # Load environment variables from .env file in common locations
 env_candidates = [
+    Path("/app/.env"),  # Docker mounted path (highest priority)
     Path(__file__).parent / ".env",
     Path.cwd() / ".env",
-    Path("/app/.env"),
 ]
+env_loaded = False
 for candidate in env_candidates:
     if candidate.exists():
-        load_dotenv(dotenv_path=candidate)
+        print(f"DEBUG: Loading .env from: {candidate}")
+        load_dotenv(dotenv_path=candidate, override=True)  # override=True ensures new values override old ones
+        env_loaded = True
         break
+
+if not env_loaded:
+    print("DEBUG: No .env file found, using system environment variables")
+    load_dotenv(override=True)  # Load from system environment
 
 # ------------------------
 # Model
@@ -38,14 +45,29 @@ def resolve_model_path(raw_path: str) -> str:
             return str(candidate)
     return str(Path("/models") / path)
 
-MODEL_PATH = resolve_model_path(os.getenv("MODEL_PATH", "default.gguf"))
+# Get MODEL_PATH from environment
+raw_model_path = os.getenv("MODEL_PATH", "default.gguf")
+print(f"DEBUG: Raw MODEL_PATH from environment: {raw_model_path}")
+print(f"DEBUG: All MODEL_PATH related env vars: {[(k, v) for k, v in os.environ.items() if 'MODEL' in k]}")
+
+MODEL_PATH = resolve_model_path(raw_model_path)
+print(f"DEBUG: Resolved MODEL_PATH: {MODEL_PATH}")
+print(f"DEBUG: MODEL_PATH exists: {os.path.exists(MODEL_PATH)}")
+
 if not os.path.exists(MODEL_PATH):
     raise FileNotFoundError(
         f"Model file not found at {MODEL_PATH}. Please set MODEL_PATH in .env file."
     )
 
-CHAT_FORMAT = os.getenv("CHAT_FORMAT", "chatml")
+# Print model file info for verification
+model_stat = os.stat(MODEL_PATH)
+print(f"DEBUG: Model file size: {model_stat.st_size / (1024*1024):.2f} MB")
+print(f"DEBUG: Model file modified: {time.ctime(model_stat.st_mtime)}")
 
+CHAT_FORMAT = os.getenv("CHAT_FORMAT", "chatml")
+print(f"DEBUG: CHAT_FORMAT: {CHAT_FORMAT}")
+
+print(f"DEBUG: Loading model from: {MODEL_PATH}")
 llm = Llama(
     model_path=MODEL_PATH,
     n_ctx=8192,
