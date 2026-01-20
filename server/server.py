@@ -127,8 +127,26 @@ def sanitize_output(text: str) -> str:
             cleaned = cleaned.split(token, 1)[0]
     return cleaned.strip()
 
+def iter_stream_chunks(raw_text: str, buffer: str) -> tuple[str, str, bool]:
+    buffer += raw_text
+
+    for token in STOP_TOKENS:
+        index = buffer.find(token)
+        if index != -1:
+            return buffer[:index], "", True
+
+    safe_len = len(buffer)
+    for token in STOP_TOKENS:
+        for i in range(1, len(token)):
+            if buffer.endswith(token[:i]):
+                safe_len = min(safe_len, len(buffer) - i)
+                break
+
+    return buffer[:safe_len], buffer[safe_len:], False
+
 def generate_stream(prompt, max_tokens, temperature):
     """Generator function for streaming responses"""
+    buffer = ""
     for token in llm(
         prompt,
         max_tokens=max_tokens,
@@ -138,25 +156,29 @@ def generate_stream(prompt, max_tokens, temperature):
         repeat_penalty=1.1,
         stream=True  # Enable streaming from llama.cpp
     ):
-        chunk_text = sanitize_output(token["choices"][0]["text"])
-        if not chunk_text:
-            continue
-        chunk = {
-            "id": f"chatcmpl-{int(time.time())}",
-            "object": "chat.completion.chunk",
-            "created": int(time.time()),
-            "model": "gemma-2-2b-it",
-            "choices": [
-                {
-                    "index": 0,
-                    "delta": {
-                        "content": chunk_text
-                    },
-                    "finish_reason": None
-                }
-            ]
-        }
-        yield f"data: {json.dumps(chunk)}\n\n"
+        chunk_text, buffer, done = iter_stream_chunks(
+            token["choices"][0]["text"],
+            buffer,
+        )
+        if chunk_text:
+            chunk = {
+                "id": f"chatcmpl-{int(time.time())}",
+                "object": "chat.completion.chunk",
+                "created": int(time.time()),
+                "model": "gemma-2-2b-it",
+                "choices": [
+                    {
+                        "index": 0,
+                        "delta": {
+                            "content": chunk_text
+                        },
+                        "finish_reason": None
+                    }
+                ]
+            }
+            yield f"data: {json.dumps(chunk)}\n\n"
+        if done:
+            break
     
     # Send final chunk
     final_chunk = {
