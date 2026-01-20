@@ -8,17 +8,41 @@ import time
 import json
 from pathlib import Path
 
-# Load environment variables from .env file in the server directory
-env_path = Path(__file__).parent / ".env"
-load_dotenv(dotenv_path=env_path)
+# Load environment variables from .env file in common locations
+env_candidates = [
+    Path(__file__).parent / ".env",
+    Path.cwd() / ".env",
+    Path("/app/.env"),
+]
+for candidate in env_candidates:
+    if candidate.exists():
+        load_dotenv(dotenv_path=candidate)
+        break
 
 # ------------------------
 # Model
 # ------------------------
 
-MODEL_PATH = os.getenv("MODEL_PATH", "/models/default.gguf")
+def resolve_model_path(raw_path: str) -> str:
+    path = Path(raw_path)
+    if path.is_absolute():
+        return str(path)
+
+    candidates = [
+        Path("/models") / path,
+        Path("/app") / path,
+        path,
+    ]
+    for candidate in candidates:
+        if candidate.exists():
+            return str(candidate)
+    return str(Path("/models") / path)
+
+MODEL_PATH = resolve_model_path(os.getenv("MODEL_PATH", "default.gguf"))
 if not os.path.exists(MODEL_PATH):
-    raise FileNotFoundError(f"Model file not found at {MODEL_PATH}. Please set MODEL_PATH in .env file.")
+    raise FileNotFoundError(
+        f"Model file not found at {MODEL_PATH}. Please set MODEL_PATH in .env file."
+    )
 
 llm = Llama(
     model_path=MODEL_PATH,

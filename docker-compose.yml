@@ -13,6 +13,7 @@ services:
       - server/.env
     volumes:
       - ./models:/models:ro
+      - ./server/.env:/app/.env:ro
     restart: unless-stopped
     networks:
       - ai-stack-network
