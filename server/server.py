@@ -48,10 +48,10 @@ CHAT_FORMAT = os.getenv("CHAT_FORMAT", "chatml")
 
 llm = Llama(
     model_path=MODEL_PATH,
-    n_ctx=2048,
-    n_threads=3,              # Use 3 cores (leave 1 for system/FastAPI)
+    n_ctx=8192,
+    n_threads=12,              # Use 12 cores
     n_batch=512,              # Batch processing
-    use_mlock=True,           # Lock in RAM (you have 8GB)
+    use_mlock=True,           # Lock in RAM
     use_mmap=True,            # Memory-map the file
     verbose=False,
     n_gpu_layers=0,           # Pi 5 doesn't have GPU acceleration for llama.cpp
