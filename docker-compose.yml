@@ -47,7 +47,6 @@ services:
       - type: bind
         source: ./LibreChat/librechat.yaml
         target: /app/librechat.yaml
-        required: false
       - ./LibreChat/images:/app/client/public/images
       - ./LibreChat/uploads:/app/uploads
       - ./LibreChat/logs:/app/logs
