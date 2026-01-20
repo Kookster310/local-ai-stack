@@ -114,7 +114,7 @@ endpoints:
   custom:
     - name: "Local LLM"
       apiKey: "example-openai-api-key"
-      baseURL: "https://ai.310networks.com/openai/v1"
+      baseURL: "http://ai-server:8000/openai/v1"
       models:
         default: ["gpt-oss-20b-Q4_K_M"]
         fetch: false
