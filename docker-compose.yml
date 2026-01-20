@@ -1,0 +1,118 @@
+version: '3.8'
+
+services:
+  # AI Server - Provides OpenAI and Ollama compatible APIs
+  ai-server:
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+    container_name: local-ai-server
+    ports:
+      - "8000:8000"
+    env_file:
+      - server/.env
+    environment:
+      - MODEL_PATH=${MODEL_PATH:-/models/default.gguf}
+    volumes:
+      - ./models:/models:ro
+    restart: unless-stopped
+    networks:
+      - ai-stack-network
+
+  # LibreChat API
+  librechat-api:
+    container_name: LibreChat
+    image: ghcr.io/danny-avila/librechat-dev:latest
+    ports:
+      - "${PORT:-3080}:${PORT:-3080}"
+    depends_on:
+      - mongodb
+      - rag_api
+      - ai-server
+    restart: always
+    user: "${UID:-1000}:${GID:-1000}"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      - HOST=0.0.0.0
+      - PORT=${PORT:-3080}
+      - MONGO_URI=mongodb://mongodb:27017/LibreChat
+      - MEILI_HOST=http://meilisearch:7700
+      - RAG_PORT=${RAG_PORT:-8000}
+      - RAG_API_URL=http://rag_api:${RAG_PORT:-8000}
+    volumes:
+      - type: bind
+        source: ./LibreChat/.env
+        target: /app/.env
+      - type: bind
+        source: ./LibreChat/librechat.yaml
+        target: /app/librechat.yaml
+        required: false
+      - ./LibreChat/images:/app/client/public/images
+      - ./LibreChat/uploads:/app/uploads
+      - ./LibreChat/logs:/app/logs
+    networks:
+      - ai-stack-network
+
+  # MongoDB for LibreChat
+  mongodb:
+    container_name: chat-mongodb
+    image: mongo:8.0.17
+    restart: always
+    user: "${UID:-1000}:${GID:-1000}"
+    volumes:
+      - ./LibreChat/data-node:/data/db
+    command: mongod --noauth
+    networks:
+      - ai-stack-network
+
+  # Meilisearch for LibreChat
+  meilisearch:
+    container_name: chat-meilisearch
+    image: getmeili/meilisearch:v1.12.3
+    restart: always
+    user: "${UID:-1000}:${GID:-1000}"
+    environment:
+      - MEILI_HOST=http://meilisearch:7700
+      - MEILI_NO_ANALYTICS=true
+      - MEILI_MASTER_KEY=${MEILI_MASTER_KEY:-masterKey}
+    volumes:
+      - ./LibreChat/meili_data_v1.12:/meili_data
+    networks:
+      - ai-stack-network
+
+  # Vector Database for RAG
+  vectordb:
+    container_name: vectordb
+    image: pgvector/pgvector:0.8.0-pg15-trixie
+    environment:
+      POSTGRES_DB: mydatabase
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+    restart: always
+    volumes:
+      - pgdata2:/var/lib/postgresql/data
+    networks:
+      - ai-stack-network
+
+  # RAG API for LibreChat
+  rag_api:
+    container_name: rag_api
+    image: ghcr.io/danny-avila/librechat-rag-api-dev-lite:latest
+    environment:
+      - DB_HOST=vectordb
+      - RAG_PORT=${RAG_PORT:-8000}
+    restart: always
+    depends_on:
+      - vectordb
+    env_file:
+      - LibreChat/.env
+    networks:
+      - ai-stack-network
+
+volumes:
+  pgdata2:
+
+networks:
+  ai-stack-network:
+    driver: bridge
