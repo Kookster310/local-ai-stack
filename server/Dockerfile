@@ -17,5 +17,8 @@ COPY server/server.py server.py
 # Expose port
 EXPOSE 8000
 
+# Set Python to unbuffered mode for Docker logs
+ENV PYTHONUNBUFFERED=1
+
 # Run the server
 CMD ["uvicorn", "server:app", "--host", "0.0.0.0", "--port", "8000"]

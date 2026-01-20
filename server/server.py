@@ -6,7 +6,12 @@ from dotenv import load_dotenv
 import os
 import time
 import json
+import sys
 from pathlib import Path
+
+# Force unbuffered output for Docker logs
+sys.stdout.reconfigure(line_buffering=True)
+sys.stderr.reconfigure(line_buffering=True)
 
 # Load environment variables from .env file in common locations
 env_candidates = [
@@ -17,13 +22,13 @@ env_candidates = [
 env_loaded = False
 for candidate in env_candidates:
     if candidate.exists():
-        print(f"DEBUG: Loading .env from: {candidate}")
+        print(f"DEBUG: Loading .env from: {candidate}", flush=True)
         load_dotenv(dotenv_path=candidate, override=True)  # override=True ensures new values override old ones
         env_loaded = True
         break
 
 if not env_loaded:
-    print("DEBUG: No .env file found, using system environment variables")
+    print("DEBUG: No .env file found, using system environment variables", flush=True)
     load_dotenv(override=True)  # Load from system environment
 
 # ------------------------
@@ -47,27 +52,29 @@ def resolve_model_path(raw_path: str) -> str:
 
 # Get MODEL_PATH from environment
 raw_model_path = os.getenv("MODEL_PATH", "default.gguf")
-print(f"DEBUG: Raw MODEL_PATH from environment: {raw_model_path}")
-print(f"DEBUG: All MODEL_PATH related env vars: {[(k, v) for k, v in os.environ.items() if 'MODEL' in k]}")
+print(f"DEBUG: Raw MODEL_PATH from environment: {raw_model_path}", flush=True)
+model_env_vars = [(k, v) for k, v in os.environ.items() if 'MODEL' in k]
+print(f"DEBUG: All MODEL_PATH related env vars: {model_env_vars}", flush=True)
 
 MODEL_PATH = resolve_model_path(raw_model_path)
-print(f"DEBUG: Resolved MODEL_PATH: {MODEL_PATH}")
-print(f"DEBUG: MODEL_PATH exists: {os.path.exists(MODEL_PATH)}")
+print(f"DEBUG: Resolved MODEL_PATH: {MODEL_PATH}", flush=True)
+print(f"DEBUG: MODEL_PATH exists: {os.path.exists(MODEL_PATH)}", flush=True)
 
 if not os.path.exists(MODEL_PATH):
-    raise FileNotFoundError(
-        f"Model file not found at {MODEL_PATH}. Please set MODEL_PATH in .env file."
-    )
+    error_msg = f"Model file not found at {MODEL_PATH}. Please set MODEL_PATH in .env file."
+    print(f"ERROR: {error_msg}", flush=True)
+    raise FileNotFoundError(error_msg)
 
 # Print model file info for verification
 model_stat = os.stat(MODEL_PATH)
-print(f"DEBUG: Model file size: {model_stat.st_size / (1024*1024):.2f} MB")
-print(f"DEBUG: Model file modified: {time.ctime(model_stat.st_mtime)}")
+print(f"DEBUG: Model file size: {model_stat.st_size / (1024*1024):.2f} MB", flush=True)
+print(f"DEBUG: Model file modified: {time.ctime(model_stat.st_mtime)}", flush=True)
+print(f"DEBUG: Model file path: {MODEL_PATH}", flush=True)
 
 CHAT_FORMAT = os.getenv("CHAT_FORMAT", "chatml")
-print(f"DEBUG: CHAT_FORMAT: {CHAT_FORMAT}")
+print(f"DEBUG: CHAT_FORMAT: {CHAT_FORMAT}", flush=True)
 
-print(f"DEBUG: Loading model from: {MODEL_PATH}")
+print(f"DEBUG: Loading model from: {MODEL_PATH}", flush=True)
 llm = Llama(
     model_path=MODEL_PATH,
     n_ctx=8192,
@@ -109,6 +116,25 @@ def require_api_key(valid_keys: set[str]):
 # FastAPI App
 # ------------------------
 app = FastAPI(title="Local Chatbot API")
+
+@app.on_event("startup")
+async def startup_event():
+    """Log model information on startup"""
+    print("=" * 60, flush=True)
+    print("AI SERVER STARTUP", flush=True)
+    print("=" * 60, flush=True)
+    print(f"Model Path: {MODEL_PATH}", flush=True)
+    print(f"Model Exists: {os.path.exists(MODEL_PATH)}", flush=True)
+    if os.path.exists(MODEL_PATH):
+        model_stat = os.stat(MODEL_PATH)
+        print(f"Model Size: {model_stat.st_size / (1024*1024):.2f} MB", flush=True)
+        print(f"Model Modified: {time.ctime(model_stat.st_mtime)}", flush=True)
+    print(f"Chat Format: {CHAT_FORMAT}", flush=True)
+    try:
+        print(f"Context Size: {llm.n_ctx()}", flush=True)
+    except:
+        pass
+    print("=" * 60, flush=True)
 
 # ------------------------
 # AI Routers
