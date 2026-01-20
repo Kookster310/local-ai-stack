@@ -44,6 +44,8 @@ if not os.path.exists(MODEL_PATH):
         f"Model file not found at {MODEL_PATH}. Please set MODEL_PATH in .env file."
     )
 
+CHAT_FORMAT = os.getenv("CHAT_FORMAT", "chatml")
+
 llm = Llama(
     model_path=MODEL_PATH,
     n_ctx=2048,
@@ -53,6 +55,7 @@ llm = Llama(
     use_mmap=True,            # Memory-map the file
     verbose=False,
     n_gpu_layers=0,           # Pi 5 doesn't have GPU acceleration for llama.cpp
+    chat_format=CHAT_FORMAT,
 )
 
 # ------------------------
@@ -144,20 +147,18 @@ def iter_stream_chunks(raw_text: str, buffer: str) -> tuple[str, str, bool]:
 
     return buffer[:safe_len], buffer[safe_len:], False
 
-def generate_stream(prompt, max_tokens, temperature):
+def generate_stream(messages, max_tokens, temperature):
     """Generator function for streaming responses"""
     buffer = ""
-    for token in llm(
-        prompt,
+    for token in llm.create_chat_completion(
+        messages=messages,
         max_tokens=max_tokens,
         temperature=temperature,
         stop=STOP_TOKENS,
-        echo=False,
-        repeat_penalty=1.1,
-        stream=True  # Enable streaming from llama.cpp
+        stream=True,
     ):
         chunk_text, buffer, done = iter_stream_chunks(
-            token["choices"][0]["text"],
+            token["choices"][0]["delta"].get("content", ""),
             buffer,
         )
         if chunk_text:
@@ -209,37 +210,25 @@ def chat_completions(req: ChatCompletionRequest):
     print(f"Stream: {req.stream}")
     print("=" * 50)
     
-    # Build proper Gemma chat template
-    prompt = ""
-    for msg in req.messages:
-        if msg.role == "user":
-            prompt += f"<start_of_turn>user\n{msg.content}<end_of_turn>\n"
-        elif msg.role == "assistant":
-            prompt += f"<start_of_turn>model\n{msg.content}<end_of_turn>\n"
-        elif msg.role == "system":
-            prompt += f"<start_of_turn>system\n{msg.content}<end_of_turn>\n"
-    
-    prompt += "<start_of_turn>model\n"
+    messages = [{"role": msg.role, "content": msg.content} for msg in req.messages]
     
     # Handle streaming vs non-streaming
     if req.stream:
         print("STREAMING MODE ENABLED")
         return StreamingResponse(
-            generate_stream(prompt, req.max_tokens, req.temperature),
+            generate_stream(messages, req.max_tokens, req.temperature),
             media_type="text/event-stream"
         )
     else:
         # Non-streaming response (for title generation, etc.)
-        result = llm(
-            prompt,
+        result = llm.create_chat_completion(
+            messages=messages,
             max_tokens=req.max_tokens,
             temperature=req.temperature,
             stop=STOP_TOKENS,
-            echo=False,
-            repeat_penalty=1.1,
         )
-        
-        content = sanitize_output(result["choices"][0]["text"])
+
+        content = sanitize_output(result["choices"][0]["message"]["content"])
         
         print(f"RESPONSE: {content}")
         
