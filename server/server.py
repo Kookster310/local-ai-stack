@@ -111,7 +111,7 @@ class Message(BaseModel):
 class ChatCompletionRequest(BaseModel):
     model: str | None = None
     messages: list[Message]
-    max_tokens: int = 256
+    max_tokens: int = 2048  # Increased default for longer responses
     temperature: float = 0.7
     stream: bool = False
 
@@ -149,41 +149,65 @@ def iter_stream_chunks(raw_text: str, buffer: str) -> tuple[str, str, bool]:
 
 def generate_stream(messages, max_tokens, temperature):
     """Generator function for streaming responses"""
-    buffer = ""
-    for token in llm.create_chat_completion(
-        messages=messages,
-        max_tokens=max_tokens,
-        temperature=temperature,
-        stop=STOP_TOKENS,
-        stream=True,
-    ):
-        chunk_text, buffer, done = iter_stream_chunks(
-            token["choices"][0]["delta"].get("content", ""),
-            buffer,
-        )
-        if chunk_text:
-            chunk = {
-                "id": f"chatcmpl-{int(time.time())}",
-                "object": "chat.completion.chunk",
-                "created": int(time.time()),
-                "model": "gemma-2-2b-it",
-                "choices": [
-                    {
-                        "index": 0,
-                        "delta": {
-                            "content": chunk_text
-                        },
-                        "finish_reason": None
-                    }
-                ]
-            }
-            yield f"data: {json.dumps(chunk)}\n\n"
-        if done:
-            break
+    stream_id = f"chatcmpl-{int(time.time())}"
+    finish_reason = None
+    
+    try:
+        for token in llm.create_chat_completion(
+            messages=messages,
+            max_tokens=max_tokens,
+            temperature=temperature,
+            stop=STOP_TOKENS,
+            stream=True,
+        ):
+            # Check if stream is finished
+            if token.get("choices") and len(token["choices"]) > 0:
+                choice = token["choices"][0]
+                delta = choice.get("delta", {})
+                finish_reason = choice.get("finish_reason")
+                
+                # Get content from delta
+                content = delta.get("content", "")
+                if content:
+                    # Check for stop tokens in content
+                    chunk_text = content
+                    for stop_token in STOP_TOKENS:
+                        if stop_token in content:
+                            # Split at stop token and send everything before it
+                            chunk_text = content.split(stop_token)[0]
+                            finish_reason = "stop"
+                            break
+                    
+                    # Send chunk if we have content
+                    if chunk_text:
+                        chunk = {
+                            "id": stream_id,
+                            "object": "chat.completion.chunk",
+                            "created": int(time.time()),
+                            "model": "gemma-2-2b-it",
+                            "choices": [
+                                {
+                                    "index": 0,
+                                    "delta": {
+                                        "content": chunk_text
+                                    },
+                                    "finish_reason": None
+                                }
+                            ]
+                        }
+                        yield f"data: {json.dumps(chunk)}\n\n"
+                
+                # If finish_reason is set, break
+                if finish_reason:
+                    break
+    
+    except Exception as e:
+        print(f"Error in streaming: {e}")
+        finish_reason = "stop"
     
     # Send final chunk
     final_chunk = {
-        "id": f"chatcmpl-{int(time.time())}",
+        "id": stream_id,
         "object": "chat.completion.chunk",
         "created": int(time.time()),
         "model": "gemma-2-2b-it",
@@ -191,7 +215,7 @@ def generate_stream(messages, max_tokens, temperature):
             {
                 "index": 0,
                 "delta": {},
-                "finish_reason": "stop"
+                "finish_reason": finish_reason or "stop"
             }
         ]
     }
@@ -228,7 +252,15 @@ def chat_completions(req: ChatCompletionRequest):
             stop=STOP_TOKENS,
         )
 
-        content = sanitize_output(result["choices"][0]["message"]["content"])
+        # Get content and handle finish_reason
+        choice = result["choices"][0]
+        content = sanitize_output(choice["message"]["content"])
+        
+        # Check if response was cut off due to max_tokens
+        finish_reason = choice.get("finish_reason")
+        if finish_reason == "length":
+            print(f"WARNING: Response was truncated due to max_tokens limit ({req.max_tokens})")
+            # Optionally append a note, but don't modify content as it might break things
         
         print(f"RESPONSE: {content}")
         
