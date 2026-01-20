@@ -31,11 +31,14 @@ A complete local AI stack that runs AI models locally with OpenAI and Ollama com
    Set up LibreChat environment:
    ```bash
    cp LibreChat/.env.example LibreChat/.env
+   cp LibreChat/librechat.example.yaml LibreChat/librechat.yaml
    ```
    
    Edit `LibreChat/.env` and configure according to [LibreChat documentation](https://www.librechat.ai/docs/configuration/dotenv).
    
-   Important: Configure LibreChat to use your local AI server by setting the OpenAI endpoint to `http://ai-server:8000/openai` in the LibreChat configuration.
+   Edit `LibreChat/librechat.yaml` to configure LibreChat endpoints and settings. To connect LibreChat to your local AI server, configure the OpenAI endpoint in the YAML file:
+   - Set the base URL to `http://ai-server:8000/openai`
+   - Use one of the API keys from `OPENAI_API_KEYS` in `server/.env`
 
 3. **Add your model files**
    
@@ -62,11 +65,15 @@ A complete local AI stack that runs AI models locally with OpenAI and Ollama com
 
 ### LibreChat Configuration
 
-See [LibreChat documentation](https://www.librechat.ai/docs/configuration/dotenv) for full configuration options.
+LibreChat requires two configuration files:
+- `LibreChat/.env`: Environment variables (see [LibreChat documentation](https://www.librechat.ai/docs/configuration/dotenv))
+- `LibreChat/librechat.yaml`: YAML configuration file for endpoints and settings
 
-To connect LibreChat to your local AI server, configure the OpenAI endpoint in LibreChat's settings to use:
+To connect LibreChat to your local AI server, edit `LibreChat/librechat.yaml` and configure the OpenAI endpoint:
 - Base URL: `http://ai-server:8000/openai`
 - API Key: Use one of the keys from `OPENAI_API_KEYS` in `server/.env`
+
+See the [LibreChat YAML configuration documentation](https://www.librechat.ai/docs/configuration/librechat_yaml) for details on configuring endpoints.
 
 ## Directory Structure
 
