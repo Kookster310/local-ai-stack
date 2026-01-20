@@ -112,17 +112,35 @@ class ChatCompletionRequest(BaseModel):
     temperature: float = 0.7
     stream: bool = False
 
+STOP_TOKENS = [
+    "<end_of_turn>",
+    "<start_of_turn>",
+    "<|end|>",
+    "<|start|>",
+    "<|eot_id|>",
+]
+
+def sanitize_output(text: str) -> str:
+    cleaned = text
+    for token in STOP_TOKENS:
+        if token in cleaned:
+            cleaned = cleaned.split(token, 1)[0]
+    return cleaned.strip()
+
 def generate_stream(prompt, max_tokens, temperature):
     """Generator function for streaming responses"""
     for token in llm(
         prompt,
         max_tokens=max_tokens,
         temperature=temperature,
-        stop=["<end_of_turn>", "<start_of_turn>"],
+        stop=STOP_TOKENS,
         echo=False,
         repeat_penalty=1.1,
         stream=True  # Enable streaming from llama.cpp
     ):
+        chunk_text = sanitize_output(token["choices"][0]["text"])
+        if not chunk_text:
+            continue
         chunk = {
             "id": f"chatcmpl-{int(time.time())}",
             "object": "chat.completion.chunk",
@@ -132,7 +150,7 @@ def generate_stream(prompt, max_tokens, temperature):
                 {
                     "index": 0,
                     "delta": {
-                        "content": token["choices"][0]["text"]
+                        "content": chunk_text
                     },
                     "finish_reason": None
                 }
@@ -194,12 +212,12 @@ def chat_completions(req: ChatCompletionRequest):
             prompt,
             max_tokens=req.max_tokens,
             temperature=req.temperature,
-            stop=["<end_of_turn>", "<start_of_turn>"],
+            stop=STOP_TOKENS,
             echo=False,
             repeat_penalty=1.1,
         )
         
-        content = result["choices"][0]["text"].strip()
+        content = sanitize_output(result["choices"][0]["text"])
         
         print(f"RESPONSE: {content}")
         
