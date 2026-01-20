@@ -113,5 +113,4 @@ curl -X POST http://localhost:8000/ollama/api/generate \
 ## Notes
 
 - Model files are stored in the `models/` directory and are excluded from git (they're large files)
-- All sensitive configuration (`.env` files) is excluded from git
 - The stack uses Docker networking, so services can communicate using service names (e.g., `ai-server`, `mongodb`)
