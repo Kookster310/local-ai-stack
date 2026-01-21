@@ -128,7 +128,7 @@ endpoints:
         X-API-Key: "local-ai-key"
       dropParams: ["user", "frequency_penalty", "presence_penalty", "top_p"]
       addParams:
-        max_tokens: 256
+        max_tokens: 8192
         temperature: 0.7
         stream: false
       capabilities:
