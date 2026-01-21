@@ -52,6 +52,12 @@ A complete local AI stack that runs AI models locally with Ollama, integrated wi
    ollama create my-model -f ./models/modelfiles/my-model.Modelfile
    ```
 
+   If you update Modelfiles later, re-create the model:
+   ```bash
+   ollama rm my-model
+   ollama create my-model -f ./models/modelfiles/my-model.Modelfile
+   ```
+
 4. **Start the stack**
    ```bash
    docker-compose up -d

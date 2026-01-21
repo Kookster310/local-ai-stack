@@ -19,7 +19,15 @@ for gguf in "${ggufs[@]}"; do
   base="$(basename "$gguf")"
   name="${base%.gguf}"
   modelfile="${out_dir}/${name}.Modelfile"
-  printf 'FROM /models/%s\n' "$base" > "$modelfile"
+  cat > "$modelfile" <<EOF
+FROM /models/${base}
+SYSTEM "Respond with the final answer only. Do not include reasoning or analysis."
+PARAMETER stop "<|end|>"
+PARAMETER stop "<|start|>"
+PARAMETER stop "<|endoftext|>"
+PARAMETER stop "<|eot_id|>"
+PARAMETER stop "</s>"
+EOF
   echo "Wrote ${modelfile}"
 done
 
@@ -65,3 +73,5 @@ echo "  # if the stack is already running:"
 echo "  docker compose up -d ollama-init"
 echo "  # or, if Ollama is already running:"
 echo "  ollama create <name> -f ./models/modelfiles/<name>.Modelfile"
+echo "  # to apply Modelfile updates:"
+echo "  ollama rm <name> && ollama create <name> -f ./models/modelfiles/<name>.Modelfile"
