@@ -24,9 +24,11 @@ A complete local AI stack that runs AI models locally with OpenAI and Ollama com
    ```
    
    Edit `server/.env` and configure:
-   - `MODEL_PATH`: Path to your model file (e.g., `/models/gemma-2-2b-it.q4_k_m.gguf`)
-   - `OPENAI_API_KEYS`: Comma-separated list of API keys for OpenAI endpoint
-   - `OLLAMA_API_KEYS`: Comma-separated list of API keys for Ollama endpoint
+   - `MODEL_PATH`: Path to your model file (e.g., `/models/gemma-3-12b-it-Q4_K_M.gguf`)
+   - `OPENAI_API_KEYS`: API key for OpenAI endpoint (use the same key in `librechat.yaml` apiKey field)
+   - `OLLAMA_API_KEYS`: API key for Ollama endpoint (optional)
+   
+   **Important**: The API key in `server/.env` must match the `apiKey` in `librechat.yaml` (default: `local-ai-key`)
 
    Set up LibreChat environment:
    ```bash
@@ -34,14 +36,9 @@ A complete local AI stack that runs AI models locally with OpenAI and Ollama com
    cp LibreChat/librechat.example.yaml LibreChat/librechat.yaml
    ```
    
-   Edit `LibreChat/.env` and configure:
-   - LibreChat-specific settings according to [LibreChat documentation](https://www.librechat.ai/docs/configuration/dotenv)
-   - **Local AI Model Configuration** (for dynamic model name in librechat.yaml):
-     - `LOCAL_MODEL_NAME`: Model name to use in LibreChat (e.g., `gemma-3-12b-it-Q4_K_M`)
-     - `LOCAL_MODEL_DISPLAY_NAME`: Display name shown in LibreChat UI (e.g., `Gemma 3 12B Local`)
-     - `LOCAL_AI_API_KEY`: API key for the local AI server (use one from `OPENAI_API_KEYS` in `server/.env`)
+   Edit `LibreChat/.env` and configure according to [LibreChat documentation](https://www.librechat.ai/docs/configuration/dotenv).
    
-   The `librechat.yaml` file uses environment variable substitution (e.g., `${LOCAL_MODEL_NAME}`), so you only need to update `LibreChat/.env` to change the model name displayed in LibreChat.
+   The `librechat.yaml` file is pre-configured to connect to your local AI server. Model selection is hidden in the UI since only one model runs at a time.
 
 3. **Add your model files**
    
@@ -72,9 +69,7 @@ LibreChat requires two configuration files:
 - `LibreChat/.env`: Environment variables (see [LibreChat documentation](https://www.librechat.ai/docs/configuration/dotenv))
 - `LibreChat/librechat.yaml`: YAML configuration file for endpoints and settings
 
-To connect LibreChat to your local AI server, edit `LibreChat/librechat.yaml` and configure the OpenAI endpoint:
-- Base URL: `http://ai-server:8000/openai`
-- API Key: Use one of the keys from `OPENAI_API_KEYS` in `server/.env`
+The `librechat.yaml` is pre-configured to connect to your local AI server. The AI server accepts any model name in requests and uses whatever model is loaded (specified in `server/.env`).
 
 See the [LibreChat YAML configuration documentation](https://www.librechat.ai/docs/configuration/librechat_yaml) for details on configuring endpoints.
 

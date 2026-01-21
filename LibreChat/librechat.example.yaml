@@ -62,8 +62,8 @@ interface:
 
       By using the Website, you acknowledge that you have read these Terms of Service and agree to be bound by them.
 
-  endpointsMenu: true
-  modelSelect: true
+  endpointsMenu: false
+  modelSelect: false
   parameters: true
   sidePanel: true
   presets: true
@@ -112,19 +112,20 @@ actions:
 # Definition of custom endpoints
 endpoints:
   custom:
-    - name: "Local LLM"
-      # Use environment variables for dynamic configuration
-      # Set LOCAL_MODEL_NAME, LOCAL_MODEL_DISPLAY_NAME, and LOCAL_AI_API_KEY in LibreChat/.env
-      apiKey: "${LOCAL_AI_API_KEY}"
+    - name: "Local AI"
+      # Simple configuration - uses whatever model is loaded in the AI server
+      # Model selection is hidden in the UI
+      # IMPORTANT: apiKey must match one of the keys in server/.env OPENAI_API_KEYS
+      apiKey: "local-ai-key"
       baseURL: "http://ai-server:8000/openai/v1"
       models:
-        default: ["${LOCAL_MODEL_NAME}"]
+        default: ["local-ai"]
         fetch: false
-      titleConvo: true
-      titleModel: "${LOCAL_MODEL_NAME}"
-      modelDisplayLabel: "${LOCAL_MODEL_DISPLAY_NAME}"
+      titleConvo: false
+      titleModel: "local-ai"
+      modelDisplayLabel: ""
       headers:
-        X-API-Key: "${LOCAL_AI_API_KEY}"
+        X-API-Key: "local-ai-key"
       dropParams: ["user", "frequency_penalty", "presence_penalty", "top_p"]
       addParams:
         max_tokens: 256

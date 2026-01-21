@@ -195,11 +195,11 @@ def iter_stream_chunks(raw_text: str, buffer: str) -> tuple[str, str, bool]:
 
     return buffer[:safe_len], buffer[safe_len:], False
 
-def generate_stream(messages, max_tokens, temperature, model_name=None):
+def generate_stream(messages, max_tokens, temperature):
     """Generator function for streaming responses"""
     stream_id = f"chatcmpl-{int(time.time())}"
     finish_reason = None
-    model_name = model_name or "gemma-2-2b-it"  # Default fallback
+    model_name = "local-ai"  # Model name doesn't matter, we use whatever is loaded
     
     try:
         for token in llm.create_chat_completion(
@@ -233,7 +233,7 @@ def generate_stream(messages, max_tokens, temperature, model_name=None):
                             "id": stream_id,
                             "object": "chat.completion.chunk",
                             "created": int(time.time()),
-                            "model": model_name,
+                            "model": "local-ai",
                             "choices": [
                                 {
                                     "index": 0,
@@ -259,7 +259,7 @@ def generate_stream(messages, max_tokens, temperature, model_name=None):
         "id": stream_id,
         "object": "chat.completion.chunk",
         "created": int(time.time()),
-        "model": model_name,
+        "model": "local-ai",
         "choices": [
             {
                 "index": 0,
@@ -286,11 +286,11 @@ def chat_completions(req: ChatCompletionRequest):
     messages = [{"role": msg.role, "content": msg.content} for msg in req.messages]
     
     # Handle streaming vs non-streaming
+    # Note: Model name in request is ignored - we use whatever model is loaded
     if req.stream:
         print("STREAMING MODE ENABLED")
-        model_name = req.model or "gemma-2-2b-it"
         return StreamingResponse(
-            generate_stream(messages, req.max_tokens, req.temperature, model_name=model_name),
+            generate_stream(messages, req.max_tokens, req.temperature),
             media_type="text/event-stream"
         )
     else:
@@ -321,7 +321,7 @@ def chat_completions(req: ChatCompletionRequest):
             "id": f"chatcmpl-{int(time.time())}",
             "object": "chat.completion",
             "created": int(time.time()),
-            "model": req.model or "gemma-2-2b-it",
+            "model": req.model or "local-ai",
             "choices": [
                 {
                     "index": 0,
