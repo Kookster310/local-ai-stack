@@ -184,6 +184,14 @@ THOUGHT_PREFIXES = [
     "I will",
 ]
 
+def strip_thoughts_after_answer(text: str) -> str:
+    """Cut off reasoning if it appears after an answer."""
+    for prefix in THOUGHT_PREFIXES:
+        idx = text.find(prefix)
+        if idx != -1:
+            return text[:idx].rstrip()
+    return text
+
 def strip_thought_tags(text: str, in_think: bool) -> tuple[str, bool]:
     """Remove <think>...</think> blocks from text while streaming."""
     output = ""
@@ -225,6 +233,7 @@ def sanitize_output(text: str) -> str:
             cleaned = cleaned.split(token, 1)[0]
     cleaned = cleaned.replace(THINK_TAG_START, "").replace(THINK_TAG_END, "")
     cleaned = truncate_thought_lines(cleaned)
+    cleaned = strip_thoughts_after_answer(cleaned)
     return cleaned.strip()
 
 def iter_stream_chunks(raw_text: str, buffer: str) -> tuple[str, str, bool]:
@@ -270,6 +279,11 @@ def generate_stream(messages, max_tokens, temperature):
                 # Get content from delta
                 content = delta.get("content", "")
                 if content:
+                    # If content begins to show reasoning, stop immediately
+                    if any(prefix in content for prefix in THOUGHT_PREFIXES):
+                        finish_reason = "stop"
+                        stop_stream = True
+                        break
                     # Strip <think>...</think> blocks while streaming
                     content, in_think = strip_thought_tags(content, in_think)
                     if not content:
