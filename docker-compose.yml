@@ -1,17 +1,15 @@
 services:
-  # AI Server - Provides OpenAI and Ollama compatible APIs
-  ai-server:
-    build:
-      context: .
-      dockerfile: server/Dockerfile
-    container_name: local-ai-server
+  # Ollama - Model runtime and API
+  ollama:
+    container_name: ollama
+    image: ollama/ollama:latest
     ports:
-      - "8000:8000"
-    env_file:
-      - server/.env
+      - "11434:11434"
+    environment:
+      - OLLAMA_HOST=0.0.0.0
+      - OLLAMA_MODELS=/models/ollama
     volumes:
-      - ./models:/models:ro
-      - ./server/.env:/app/.env:ro
+      - ./models:/models
     restart: unless-stopped
     networks:
       - ai-stack-network
@@ -25,7 +23,7 @@ services:
     depends_on:
       - mongodb
       - rag_api
-      - ai-server
+      - ollama
     restart: always
     user: "${UID:-1000}:${GID:-1000}"
     extra_hosts:

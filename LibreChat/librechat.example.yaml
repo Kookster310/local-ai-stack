@@ -111,27 +111,10 @@ actions:
 
 # Definition of custom endpoints
 endpoints:
-  custom:
-    - name: "Local AI"
-      # Simple configuration - uses whatever model is loaded in the AI server
-      # Model selection is hidden in the UI
-      # IMPORTANT: apiKey must match one of the keys in server/.env OPENAI_API_KEYS
-      apiKey: "local-ai-key"
-      baseURL: "http://ai-server:8000/openai/v1"
-      models:
-        default: ["local-ai"]
-        fetch: false
-      titleConvo: false
-      titleModel: "local-ai"
-      modelDisplayLabel: ""
-      headers:
-        X-API-Key: "local-ai-key"
-      dropParams: ["user", "frequency_penalty", "presence_penalty", "top_p"]
-      addParams:
-        max_tokens: 8192
-        temperature: 0.7
-        stream: false
-      capabilities:
-        tools: false
-        actions: false
-        code_interpreter: false
+  ollama:
+    baseURL: "http://ollama:11434"
+    models:
+      default: ["llama3"]
+      fetch: true
+    titleConvo: false
+    dropParams: ["user", "frequency_penalty", "presence_penalty", "top_p"]

@@ -1,5 +1,4 @@
 # Environment files
-server/.env
 LibreChat/.env
 *.env
 !**/.env.example
@@ -9,6 +8,7 @@ models/*.gguf
 models/*.gguf.json
 models/*.bin
 models/*.safetensors
+models/ollama/
 !models/.gitkeep
 
 # Python
