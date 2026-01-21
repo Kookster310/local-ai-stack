@@ -39,6 +39,9 @@ LibreChat/meili_data*/
 LibreChat/logs/
 LibreChat/uploads/
 LibreChat/images/
+!LibreChat/logs/.gitkeep
+!LibreChat/uploads/.gitkeep
+!LibreChat/images/.gitkeep
 LibreChat/librechat.yaml
 LibreChat/librechat.yml
 LibreChat/docker-compose.override.yaml
