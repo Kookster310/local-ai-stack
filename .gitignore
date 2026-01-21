@@ -39,6 +39,11 @@ LibreChat/meili_data*/
 LibreChat/logs/
 LibreChat/uploads/
 LibreChat/images/
+!LibreChat/data-node/
+!LibreChat/meili_data_v1.12/
+!LibreChat/logs/
+!LibreChat/uploads/
+!LibreChat/images/
 !LibreChat/data-node/.gitkeep
 !LibreChat/meili_data_v1.12/.gitkeep
 !LibreChat/logs/.gitkeep
