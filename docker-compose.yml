@@ -32,6 +32,8 @@ services:
     user: "${UID:-1000}:${GID:-1000}"
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    env_file:
+      - LibreChat/.env
     environment:
       - HOST=0.0.0.0
       - PORT=${PORT:-3080}
@@ -39,6 +41,11 @@ services:
       - MEILI_HOST=http://meilisearch:7700
       - RAG_PORT=${RAG_PORT:-8000}
       - RAG_API_URL=http://rag_api:${RAG_PORT:-8000}
+      # Model configuration - read from LibreChat/.env
+      # Set LOCAL_MODEL_NAME, LOCAL_MODEL_DISPLAY_NAME, and LOCAL_AI_API_KEY in LibreChat/.env
+      - LOCAL_MODEL_NAME=${LOCAL_MODEL_NAME:-gemma-3-12b-it-Q4_K_M}
+      - LOCAL_MODEL_DISPLAY_NAME=${LOCAL_MODEL_DISPLAY_NAME:-Local LLM}
+      - LOCAL_AI_API_KEY=${LOCAL_AI_API_KEY:-example-openai-api-key}
     volumes:
       - type: bind
         source: ./LibreChat/.env

@@ -34,11 +34,14 @@ A complete local AI stack that runs AI models locally with OpenAI and Ollama com
    cp LibreChat/librechat.example.yaml LibreChat/librechat.yaml
    ```
    
-   Edit `LibreChat/.env` and configure according to [LibreChat documentation](https://www.librechat.ai/docs/configuration/dotenv).
+   Edit `LibreChat/.env` and configure:
+   - LibreChat-specific settings according to [LibreChat documentation](https://www.librechat.ai/docs/configuration/dotenv)
+   - **Local AI Model Configuration** (for dynamic model name in librechat.yaml):
+     - `LOCAL_MODEL_NAME`: Model name to use in LibreChat (e.g., `gemma-3-12b-it-Q4_K_M`)
+     - `LOCAL_MODEL_DISPLAY_NAME`: Display name shown in LibreChat UI (e.g., `Gemma 3 12B Local`)
+     - `LOCAL_AI_API_KEY`: API key for the local AI server (use one from `OPENAI_API_KEYS` in `server/.env`)
    
-   Edit `LibreChat/librechat.yaml` to configure LibreChat endpoints and settings. To connect LibreChat to your local AI server, configure the OpenAI endpoint in the YAML file:
-   - Set the base URL to `http://ai-server:8000/openai`
-   - Use one of the API keys from `OPENAI_API_KEYS` in `server/.env`
+   The `librechat.yaml` file uses environment variable substitution (e.g., `${LOCAL_MODEL_NAME}`), so you only need to update `LibreChat/.env` to change the model name displayed in LibreChat.
 
 3. **Add your model files**
    
