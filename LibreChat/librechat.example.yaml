@@ -113,8 +113,8 @@ actions:
 endpoints:
   custom:
     - name: "Ollama"
-      apiKey: "user_provided"
-      baseURL: "http://ollama:11434"
+      apiKey: "not-required"
+      baseURL: "http://ollama:11434/v1"
       models:
         default: ["llama3"]
         fetch: true

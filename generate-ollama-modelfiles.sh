@@ -61,5 +61,7 @@ update_default_model "${repo_dir}/LibreChat/librechat.example.yaml"
 
 echo "Done. Create a model with:"
 echo "  docker compose up -d  # ollama-init will create models"
+echo "  # if the stack is already running:"
+echo "  docker compose up -d ollama-init"
 echo "  # or, if Ollama is already running:"
 echo "  ollama create <name> -f ./models/modelfiles/<name>.Modelfile"

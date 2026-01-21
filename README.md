@@ -42,6 +42,11 @@ A complete local AI stack that runs AI models locally with Ollama, integrated wi
    docker-compose up -d
    ```
 
+   If the stack is already running, re-run the init step:
+   ```bash
+   docker-compose up -d ollama-init
+   ```
+
    If you have the Ollama CLI installed on the host, you can also run:
    ```bash
    ollama create my-model -f ./models/modelfiles/my-model.Modelfile
