@@ -31,7 +31,7 @@ update_default_model() {
   if [ ! -f "$file" ]; then
     return
   fi
-  python - "$file" "$default_model" <<'PY'
+  python3 - "$file" "$default_model" <<'PY'
 import re
 import sys
 
