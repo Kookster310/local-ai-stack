@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # AI Server - Provides OpenAI and Ollama compatible APIs
   ai-server:
@@ -41,8 +39,13 @@ services:
       - MEILI_HOST=http://meilisearch:7700
       - RAG_PORT=${RAG_PORT:-8000}
       - RAG_API_URL=http://rag_api:${RAG_PORT:-8000}
-      # Note: LOCAL_MODEL_NAME, LOCAL_MODEL_DISPLAY_NAME, and LOCAL_AI_API_KEY
-      # are loaded from LibreChat/.env via env_file above
+      # Explicitly pass LOCAL_MODEL variables from LibreChat/.env
+      # Note: These need to be set in your shell environment or docker-compose will use defaults
+      # To set them: export LOCAL_MODEL_NAME=gemma-3-12b-it-Q4_K_M (etc.) before running docker compose
+      # Or source them: set -a && source LibreChat/.env && set +a
+      - LOCAL_MODEL_NAME=${LOCAL_MODEL_NAME:-gemma-3-12b-it-Q4_K_M}
+      - LOCAL_MODEL_DISPLAY_NAME=${LOCAL_MODEL_DISPLAY_NAME:-Gemma 3 12B Local}
+      - LOCAL_AI_API_KEY=${LOCAL_AI_API_KEY:-310ai-openai-CGiy4tK14n81GKAJoSbbbd}
     volumes:
       - type: bind
         source: ./LibreChat/.env
