@@ -23,6 +23,42 @@ for gguf in "${ggufs[@]}"; do
   echo "Wrote ${modelfile}"
 done
 
+default_model="$(basename "${ggufs[0]}")"
+default_model="${default_model%.gguf}"
+
+update_default_model() {
+  local file="$1"
+  if [ ! -f "$file" ]; then
+    return
+  fi
+  python - "$file" "$default_model" <<'PY'
+import re
+import sys
+
+path = sys.argv[1]
+model = sys.argv[2]
+
+with open(path, "r", encoding="utf-8") as handle:
+    content = handle.read()
+
+pattern = r'(-\s*name:\s*"Ollama".*?\n)(\s*models:\s*\n)(\s*default:\s*\[)[^\]]*(\]\s*)'
+match = re.search(pattern, content, flags=re.DOTALL)
+if not match:
+    print(f"Skipped {path}: Ollama endpoint not found", file=sys.stderr)
+    sys.exit(0)
+
+replacement = match.group(1) + match.group(2) + match.group(3) + model + match.group(4)
+content = content[: match.start()] + replacement + content[match.end() :]
+
+with open(path, "w", encoding="utf-8") as handle:
+    handle.write(content)
+print(f"Updated default model in {path} to {model}")
+PY
+}
+
+update_default_model "${repo_dir}/LibreChat/librechat.yaml"
+update_default_model "${repo_dir}/LibreChat/librechat.example.yaml"
+
 echo "Done. Create a model with:"
 echo "  docker compose up -d  # ollama-init will create models"
 echo "  # or, if Ollama is already running:"

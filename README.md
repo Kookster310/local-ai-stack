@@ -32,7 +32,7 @@ A complete local AI stack that runs AI models locally with Ollama, integrated wi
 
    Place your `.gguf` model files in the `models/` directory. Ollama stores its model data in `models/ollama/` so everything stays under `models/`.
 
-   Generate Modelfiles for every `.gguf` in `models/`:
+   Generate Modelfiles for every `.gguf` in `models/` (also updates LibreChat defaults):
    ```bash
    bash ./generate-ollama-modelfiles.sh
    ```

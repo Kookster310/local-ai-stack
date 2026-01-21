@@ -111,10 +111,12 @@ actions:
 
 # Definition of custom endpoints
 endpoints:
-  ollama:
-    baseURL: "http://ollama:11434"
-    models:
-      default: ["llama3"]
-      fetch: true
-    titleConvo: false
-    dropParams: ["user", "frequency_penalty", "presence_penalty", "top_p"]
+  custom:
+    - name: "Ollama"
+      apiKey: "user_provided"
+      baseURL: "http://ollama:11434"
+      models:
+        default: ["llama3"]
+        fetch: true
+      titleConvo: false
+      dropParams: ["user", "frequency_penalty", "presence_penalty", "top_p"]
