@@ -14,6 +14,22 @@ services:
     networks:
       - ai-stack-network
 
+  # One-shot init: create models from Modelfiles
+  ollama-init:
+    container_name: ollama-init
+    image: ollama/ollama:latest
+    depends_on:
+      - ollama
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+    volumes:
+      - ./models:/models
+      - ./scripts/ollama-init.sh:/scripts/ollama-init.sh:ro
+    entrypoint: ["/bin/sh", "/scripts/ollama-init.sh"]
+    restart: "no"
+    networks:
+      - ai-stack-network
+
   # LibreChat API
   librechat-api:
     container_name: LibreChat

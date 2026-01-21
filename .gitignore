@@ -9,6 +9,7 @@ models/*.gguf.json
 models/*.bin
 models/*.safetensors
 models/ollama/
+models/modelfiles/
 !models/.gitkeep
 
 # Python

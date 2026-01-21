@@ -32,15 +32,19 @@ A complete local AI stack that runs AI models locally with Ollama, integrated wi
 
    Place your `.gguf` model files in the `models/` directory. Ollama stores its model data in `models/ollama/` so everything stays under `models/`.
 
-   Example Modelfile (see `models/Modelfile.example`):
-   ```text
-   FROM /models/your-model.gguf
+   Generate Modelfiles for every `.gguf` in `models/`:
+   ```bash
+   bash ./generate-ollama-modelfiles.sh
    ```
 
-   Create a model in Ollama:
+   Start the stack. The `ollama-init` service will create models from `models/modelfiles/`:
    ```bash
-   docker exec -it ollama cp /models/Modelfile.example /models/Modelfile
-   docker exec -it ollama ollama create my-model -f /models/Modelfile
+   docker-compose up -d
+   ```
+
+   If you have the Ollama CLI installed on the host, you can also run:
+   ```bash
+   ollama create my-model -f ./models/modelfiles/my-model.Modelfile
    ```
 
 4. **Start the stack**
