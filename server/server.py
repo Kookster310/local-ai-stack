@@ -163,6 +163,8 @@ class ChatCompletionRequest(BaseModel):
     temperature: float = 0.7
     stream: bool = False
 
+HIDE_THOUGHTS = os.getenv("HIDE_THOUGHTS", "true").lower() in {"1", "true", "yes", "on"}
+
 STOP_TOKENS = [
     "<end_of_turn>",
     "<start_of_turn>",
@@ -171,11 +173,58 @@ STOP_TOKENS = [
     "<|eot_id|>",
 ]
 
+THINK_TAG_START = "<think>"
+THINK_TAG_END = "</think>"
+THOUGHT_PREFIXES = [
+    "We need to",
+    "We should",
+    "We must",
+    "The user",
+    "Let's",
+    "I will",
+]
+
+def strip_thought_tags(text: str, in_think: bool) -> tuple[str, bool]:
+    """Remove <think>...</think> blocks from text while streaming."""
+    output = ""
+    remaining = text
+    while remaining:
+        if in_think:
+            end_idx = remaining.find(THINK_TAG_END)
+            if end_idx == -1:
+                return output, True
+            remaining = remaining[end_idx + len(THINK_TAG_END):]
+            in_think = False
+            continue
+        start_idx = remaining.find(THINK_TAG_START)
+        if start_idx == -1:
+            output += remaining
+            break
+        output += remaining[:start_idx]
+        remaining = remaining[start_idx + len(THINK_TAG_START):]
+        in_think = True
+    return output, in_think
+
+def truncate_thought_lines(text: str) -> str:
+    """Remove trailing chain-of-thought style lines."""
+    lines = text.splitlines()
+    kept = []
+    for line in lines:
+        stripped = line.strip()
+        if any(stripped.startswith(prefix) for prefix in THOUGHT_PREFIXES):
+            break
+        kept.append(line)
+    if kept:
+        return "\n".join(kept).strip()
+    return text.strip()
+
 def sanitize_output(text: str) -> str:
     cleaned = text
     for token in STOP_TOKENS:
         if token in cleaned:
             cleaned = cleaned.split(token, 1)[0]
+    cleaned = cleaned.replace(THINK_TAG_START, "").replace(THINK_TAG_END, "")
+    cleaned = truncate_thought_lines(cleaned)
     return cleaned.strip()
 
 def iter_stream_chunks(raw_text: str, buffer: str) -> tuple[str, str, bool]:
@@ -200,6 +249,9 @@ def generate_stream(messages, max_tokens, temperature):
     stream_id = f"chatcmpl-{int(time.time())}"
     finish_reason = None
     model_name = "local-ai"  # Model name doesn't matter, we use whatever is loaded
+    in_think = False
+    buffered = ""
+    stop_stream = False
     
     try:
         for token in llm.create_chat_completion(
@@ -218,12 +270,47 @@ def generate_stream(messages, max_tokens, temperature):
                 # Get content from delta
                 content = delta.get("content", "")
                 if content:
+                    # Strip <think>...</think> blocks while streaming
+                    content, in_think = strip_thought_tags(content, in_think)
+                    if not content:
+                        continue
+                    buffered += content
+
+                    # If we detect chain-of-thought style prefixes, truncate and stop
+                    for prefix in THOUGHT_PREFIXES:
+                        marker = f"\n{prefix}"
+                        if buffered.startswith(prefix) or marker in buffered:
+                            cutoff = buffered.find(marker)
+                            if cutoff == -1:
+                                cutoff = 0
+                            chunk_text = buffered[:cutoff].rstrip()
+                            if chunk_text:
+                                chunk = {
+                                    "id": stream_id,
+                                    "object": "chat.completion.chunk",
+                                    "created": int(time.time()),
+                                    "model": "local-ai",
+                                    "choices": [
+                                        {
+                                            "index": 0,
+                                            "delta": {"content": chunk_text},
+                                            "finish_reason": None,
+                                        }
+                                    ],
+                                }
+                                yield f"data: {json.dumps(chunk)}\n\n"
+                            finish_reason = "stop"
+                            stop_stream = True
+                            break
+                    if stop_stream:
+                        break
+
                     # Check for stop tokens in content
-                    chunk_text = content
+                    chunk_text = buffered
                     for stop_token in STOP_TOKENS:
-                        if stop_token in content:
+                        if stop_token in chunk_text:
                             # Split at stop token and send everything before it
-                            chunk_text = content.split(stop_token)[0]
+                            chunk_text = chunk_text.split(stop_token)[0]
                             finish_reason = "stop"
                             break
                     
@@ -245,9 +332,10 @@ def generate_stream(messages, max_tokens, temperature):
                             ]
                         }
                         yield f"data: {json.dumps(chunk)}\n\n"
+                        buffered = ""
                 
                 # If finish_reason is set, break
-                if finish_reason:
+                if finish_reason or stop_stream:
                     break
     
     except Exception as e:
@@ -284,6 +372,14 @@ def chat_completions(req: ChatCompletionRequest):
     print("=" * 50)
     
     messages = [{"role": msg.role, "content": msg.content} for msg in req.messages]
+    if HIDE_THOUGHTS:
+        # Prepend a system instruction to avoid chain-of-thought in outputs
+        messages = [
+            {
+                "role": "system",
+                "content": "Respond with the final answer only. Do not include reasoning or analysis.",
+            }
+        ] + messages
     
     # Handle streaming vs non-streaming
     # Note: Model name in request is ignored - we use whatever model is loaded
