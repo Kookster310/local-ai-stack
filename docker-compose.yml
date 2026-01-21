@@ -57,7 +57,6 @@ services:
     container_name: chat-mongodb
     image: mongo:8.0.17
     restart: always
-    user: "${UID:-1000}:${GID:-1000}"
     volumes:
       - ./LibreChat/data-node:/data/db
     command: mongod --noauth
