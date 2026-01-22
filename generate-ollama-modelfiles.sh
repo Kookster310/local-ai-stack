@@ -19,9 +19,9 @@ for gguf in "${ggufs[@]}"; do
   base="$(basename "$gguf")"
   name="${base%.gguf}"
   modelfile="${out_dir}/${name}.Modelfile"
-  cat > "$modelfile" <<'EOF'
-FROM /models/'"${base}"'
-TEMPLATE "{{ if .System }}<|start|>system\n{{ .System }}<|end|>{{ end }}<|start|>user\n{{ .Prompt }}<|end|><|start|>assistant"
+  cat > "$modelfile" <<EOF
+FROM /models/${base}
+TEMPLATE "{{ if .System }}<|start|>system\\n{{ .System }}<|end|>{{ end }}<|start|>user\\n{{ .Prompt }}<|end|><|start|>assistant"
 SYSTEM "Respond with the final answer only. Do not include reasoning or analysis."
 PARAMETER stop "<|end|>"
 PARAMETER stop "<|start|>"
