@@ -27,8 +27,6 @@ for gguf in "${ggufs[@]}"; do
   cat > "$modelfile" <<EOF
 FROM /models/${base}
 $(if $use_template; then echo "TEMPLATE \"${template}\""; fi)
-SYSTEM "Respond with the final answer only. Do not include reasoning or analysis. Never output the word \"Thinking\"."
-PARAMETER stop "<|end|>"
 PARAMETER stop "<|start|>"
   PARAMETER stop "<|endoftext|>"
   PARAMETER stop "<|eot_id|>"
