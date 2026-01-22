@@ -411,19 +411,6 @@ describe('getModelMaxTokens', () => {
     expect(getModelMaxTokens('openai/o3')).toBe(o3Tokens);
   });
 
-  test('should return correct tokens for GPT-OSS models', () => {
-    const expected = maxTokensMap[EModelEndpoint.openAI]['gpt-oss'];
-    [
-      'gpt-oss:20b',
-      'gpt-oss-20b',
-      'gpt-oss-120b',
-      'openai/gpt-oss-20b',
-      'openai/gpt-oss-120b',
-      'openai/gpt-oss:120b',
-    ].forEach((name) => {
-      expect(getModelMaxTokens(name)).toBe(expected);
-    });
-  });
 
   test('should return correct tokens for GLM models', () => {
     expect(getModelMaxTokens('glm-4.6')).toBe(maxTokensMap[EModelEndpoint.openAI]['glm-4.6']);
@@ -496,18 +483,6 @@ describe('getModelMaxTokens', () => {
     });
   });
 
-  test('should return correct max output tokens for GPT-OSS models', () => {
-    const { getModelMaxOutputTokens } = require('@librechat/api');
-    ['gpt-oss-20b', 'gpt-oss-120b'].forEach((model) => {
-      expect(getModelMaxOutputTokens(model)).toBe(maxOutputTokensMap[EModelEndpoint.openAI][model]);
-      expect(getModelMaxOutputTokens(model, EModelEndpoint.openAI)).toBe(
-        maxOutputTokensMap[EModelEndpoint.openAI][model],
-      );
-      expect(getModelMaxOutputTokens(model, EModelEndpoint.azureOpenAI)).toBe(
-        maxOutputTokensMap[EModelEndpoint.azureOpenAI][model],
-      );
-    });
-  });
 });
 
 describe('matchModelName', () => {

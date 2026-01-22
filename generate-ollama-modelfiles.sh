@@ -19,18 +19,12 @@ for gguf in "${ggufs[@]}"; do
   base="$(basename "$gguf")"
   name="${base%.gguf}"
   modelfile="${out_dir}/${name}.Modelfile"
-  use_template=false
-  if [[ "$name" == gpt-oss* ]]; then
-    template='<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.\nKnowledge cutoff: 2024-06\nCurrent date: 2026-01-22\n\nReasoning: low\n\n# Valid channels: analysis, commentary, final. Channel must be included for every message.{{ if .System }}\n\n{{ .System }}{{ end }}<|end|><|start|>user<|message|>{{ .Prompt }}<|end|><|start|>assistant<|channel|>final<|message|>'
-    use_template=true
-  fi
   cat > "$modelfile" <<EOF
 FROM /models/${base}
-$(if $use_template; then echo "TEMPLATE \"${template}\""; fi)
 PARAMETER stop "<|start|>"
-  PARAMETER stop "<|endoftext|>"
-  PARAMETER stop "<|eot_id|>"
-  PARAMETER stop "</s>"
+PARAMETER stop "<|endoftext|>"
+PARAMETER stop "<|eot_id|>"
+PARAMETER stop "</s>"
 EOF
   echo "Wrote ${modelfile}"
 done

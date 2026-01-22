@@ -100,7 +100,6 @@ const tokenValues = Object.assign(
     command: { prompt: 0.38, completion: 0.38 },
     gemma: { prompt: 0.02, completion: 0.04 }, // Base pattern (using gemma-3n-e4b pricing)
     gemini: { prompt: 0.5, completion: 1.5 },
-    'gpt-oss': { prompt: 0.05, completion: 0.2 },
     // Specific model variants (check FIRST - more specific patterns at end)
     'gpt-3.5-turbo-1106': { prompt: 1, completion: 2 },
     'gpt-3.5-turbo-0125': { prompt: 0.5, completion: 1.5 },
@@ -190,11 +189,6 @@ const tokenValues = Object.assign(
     'mistral-large': { prompt: 2.0, completion: 6.0 },
     'mixtral-8x22b': { prompt: 0.65, completion: 0.65 },
     kimi: { prompt: 0.14, completion: 2.49 }, // Base pattern (using kimi-k2 pricing)
-    // GPT-OSS models (specific sizes)
-    'gpt-oss:20b': { prompt: 0.05, completion: 0.2 },
-    'gpt-oss-20b': { prompt: 0.05, completion: 0.2 },
-    'gpt-oss:120b': { prompt: 0.15, completion: 0.6 },
-    'gpt-oss-120b': { prompt: 0.15, completion: 0.6 },
     // GLM models (Zhipu AI) - general to specific
     glm4: { prompt: 0.1, completion: 0.1 },
     'glm-4': { prompt: 0.1, completion: 0.1 },

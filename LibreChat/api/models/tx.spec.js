@@ -207,15 +207,6 @@ describe('getValueKey', () => {
     expect(getValueKey('claude-3.5-haiku-0125')).toBe('claude-3.5-haiku');
   });
 
-  it('should return expected value keys for "gpt-oss" models', () => {
-    expect(getValueKey('openai/gpt-oss-120b')).toBe('gpt-oss-120b');
-    expect(getValueKey('openai/gpt-oss:120b')).toBe('gpt-oss:120b');
-    expect(getValueKey('openai/gpt-oss-570b')).toBe('gpt-oss');
-    expect(getValueKey('gpt-oss-570b')).toBe('gpt-oss');
-    expect(getValueKey('groq/gpt-oss-1080b')).toBe('gpt-oss');
-    expect(getValueKey('gpt-oss-20b')).toBe('gpt-oss-20b');
-    expect(getValueKey('oai/gpt-oss:20b')).toBe('gpt-oss:20b');
-  });
 });
 
 describe('getMultiplier', () => {
@@ -457,17 +448,6 @@ describe('getMultiplier', () => {
     );
   });
 
-  it('should return correct multipliers for GPT-OSS models', () => {
-    const models = ['gpt-oss-20b', 'gpt-oss-120b'];
-    models.forEach((key) => {
-      const expectedPrompt = tokenValues[key].prompt;
-      const expectedCompletion = tokenValues[key].completion;
-      expect(getMultiplier({ valueKey: key, tokenType: 'prompt' })).toBe(expectedPrompt);
-      expect(getMultiplier({ valueKey: key, tokenType: 'completion' })).toBe(expectedCompletion);
-      expect(getMultiplier({ model: key, tokenType: 'prompt' })).toBe(expectedPrompt);
-      expect(getMultiplier({ model: key, tokenType: 'completion' })).toBe(expectedCompletion);
-    });
-  });
 
   it('should return correct multipliers for GLM models', () => {
     const models = ['glm-4.6', 'glm-4.5v', 'glm-4.5-air', 'glm-4.5', 'glm-4-32b', 'glm-4', 'glm4'];

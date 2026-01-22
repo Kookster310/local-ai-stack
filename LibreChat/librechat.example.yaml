@@ -116,7 +116,7 @@ endpoints:
       apiKey: "not-required"
       baseURL: "http://ollama:11434/v1"
       models:
-        default: ["llama3"]
+        default: ["gemma-3-27b"]
         fetch: true
       titleConvo: false
       dropParams: ["user", "frequency_penalty", "presence_penalty", "top_p"]
