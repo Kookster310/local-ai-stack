@@ -118,5 +118,5 @@ endpoints:
       models:
         default: ["gemma-3-27b"]
         fetch: true
-      titleConvo: false
+      titleConvo: true
       dropParams: ["user", "frequency_penalty", "presence_penalty", "top_p"]
