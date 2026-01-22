@@ -20,7 +20,7 @@ for gguf in "${ggufs[@]}"; do
   name="${base%.gguf}"
   modelfile="${out_dir}/${name}.Modelfile"
   if [[ "$name" == gpt-oss* ]]; then
-    template='<|start|>system<|message|>{{ if .System }}{{ .System }}{{ else }}You are ChatGPT, a large language model trained by OpenAI.{{ end }}\nReasoning: medium\n\n# Valid channels: analysis, commentary, final. Channel must be included for every message.<|end|><|start|>user<|message|>{{ .Prompt }}<|end|><|start|>assistant<|channel|>final<|message|>'
+    template='<|start|>system<|message|>You are ChatGPT, a large language model trained by OpenAI.\nKnowledge cutoff: 2024-06\nCurrent date: 2026-01-22\n\nReasoning: low\n\n# Valid channels: analysis, commentary, final. Channel must be included for every message.{{ if .System }}\n\n{{ .System }}{{ end }}<|end|><|start|>user<|message|>{{ .Prompt }}<|end|><|start|>assistant<|channel|>final<|message|>'
   else
     template='{{ if .System }}<|start|>system\n{{ .System }}<|end|>{{ end }}<|start|>user\n{{ .Prompt }}<|end|><|start|>assistant'
   fi
@@ -30,10 +30,9 @@ TEMPLATE "${template}"
   SYSTEM "Respond with the final answer only. Do not include reasoning or analysis. Never output the word \"Thinking\"."
 PARAMETER stop "<|end|>"
 PARAMETER stop "<|start|>"
-PARAMETER stop "<|endoftext|>"
-PARAMETER stop "<|eot_id|>"
-PARAMETER stop "</s>"
-  PARAMETER stop "<|return|>"
+  PARAMETER stop "<|endoftext|>"
+  PARAMETER stop "<|eot_id|>"
+  PARAMETER stop "</s>"
 EOF
   echo "Wrote ${modelfile}"
 done
