@@ -21,6 +21,9 @@ for gguf in "${ggufs[@]}"; do
   modelfile="${out_dir}/${name}.Modelfile"
   cat > "$modelfile" <<EOF
 FROM /models/${base}
+TEMPLATE {{ if .System }}<|start|>system
+{{ .System }}<|end|>{{ end }}<|start|>user
+{{ .Prompt }}<|end|><|start|>assistant
 SYSTEM "Respond with the final answer only. Do not include reasoning or analysis."
 PARAMETER stop "<|end|>"
 PARAMETER stop "<|start|>"
