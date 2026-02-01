@@ -30,7 +30,7 @@ RUN mkdir -p /workspace/skills \
 # Copy configuration files
 COPY --chown=opencode:opencode opencode.json /home/opencode/.config/opencode/opencode.json
 COPY --chown=opencode:opencode hosts.yaml /workspace/hosts.yaml
-COPY --chown=opencode:opencode SOUL.md /workspace/SOUL.md
+COPY --chown=opencode:opencode SOUL.md.example /workspace/SOUL.md
 COPY --chown=opencode:opencode skills/ /workspace/skills/
 
 USER opencode

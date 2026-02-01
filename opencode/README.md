@@ -99,6 +99,8 @@ The `SOUL.md` file serves as the agent's evolving memory. The agent can update t
 
 This allows the agent to improve over time and maintain continuity across sessions.
 
+**Setup**: Copy `SOUL.md.example` to `SOUL.md` to initialize. The actual `SOUL.md` is gitignored since it contains personal agent evolution data.
+
 ## Volumes
 
 Mount these volumes in docker-compose.yml for persistence:
