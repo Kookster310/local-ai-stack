@@ -12,7 +12,7 @@
     "models": {
       "providers": {
         "ollama": {
-          "baseUrl": "http://ollama:11434/v1",
+          "baseUrl": "http://ollama:11434/v1/v1",
           "apiKey": "not-required",
           "api": "openai-completions",
           "models": [
@@ -29,7 +29,7 @@
                 "cacheRead": 0,
                 "cacheWrite": 0
               },
-              "contextWindow": 8192,
+              "contextWindow": 32768,
               "maxTokens": 32768
             }
           ]
