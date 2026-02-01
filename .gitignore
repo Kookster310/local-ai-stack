@@ -54,16 +54,6 @@ LibreChat/librechat.yml
 LibreChat/docker-compose.override.yaml
 LibreChat/docker-compose.override.yml
 
-# OpenClaw data
-openclaw-data/
-!openclaw-data/
-!openclaw-data/config/.gitkeep
-!openclaw-data/workspace/.gitkeep
-
-# OpenClaw build artifacts
-openclaw/dist/
-openclaw/node_modules/
-
 # llama.cpp build artifacts
 llama.cpp/build*/
 llama.cpp/*.so

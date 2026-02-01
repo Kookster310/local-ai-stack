@@ -124,54 +124,25 @@ services:
     networks:
       - ai-stack-network
 
-  # OpenClaw Gateway - AI assistant gateway
-  openclaw-gateway:
-    container_name: openclaw-gateway
+  # OpenCode - AI coding agent (TUI)
+  # Run with: docker compose run --rm opencode
+  opencode:
+    container_name: opencode
     build:
-      context: ./openclaw
+      context: ./opencode
       dockerfile: Dockerfile
     environment:
-      - HOME=/home/node
+      - OPENCODE_MODEL_PROVIDER=ollama
+      - OPENCODE_BASE_URL=http://ollama:11434/v1
+      - OPENCODE_MODEL_NAME=${OPENCODE_MODEL:-gpt-oss-20b}
       - TERM=xterm-256color
-      - OPENCLAW_GATEWAY_TOKEN=${OPENCLAW_GATEWAY_TOKEN:-changeme}
     volumes:
-      - ./openclaw-data/config:/home/node/.openclaw
-      - ./openclaw-data/workspace:/home/node/.openclaw/workspace
-    ports:
-      - "${OPENCLAW_GATEWAY_PORT:-18789}:18789"
-      - "${OPENCLAW_BRIDGE_PORT:-18790}:18790"
-    init: true
-    restart: unless-stopped
-    command:
-      [
-        "node",
-        "dist/index.js",
-        "gateway",
-        "--bind",
-        "${OPENCLAW_GATEWAY_BIND:-lan}",
-        "--port",
-        "${OPENCLAW_GATEWAY_PORT:-18789}",
-      ]
-    networks:
-      - ai-stack-network
-
-  # OpenClaw CLI - Interactive CLI (run with: docker compose run --rm openclaw-cli)
-  openclaw-cli:
-    container_name: openclaw-cli
-    build:
-      context: ./openclaw
-      dockerfile: Dockerfile
-    environment:
-      - HOME=/home/node
-      - TERM=xterm-256color
-      - BROWSER=echo
-    volumes:
-      - ./openclaw-data/config:/home/node/.openclaw
-      - ./openclaw-data/workspace:/home/node/.openclaw/workspace
+      - ./opencode/opencode.json:/home/opencode/.opencode/config.json:ro
+      - ./:/workspace
     stdin_open: true
     tty: true
-    init: true
-    entrypoint: ["node", "dist/index.js"]
+    depends_on:
+      - ollama
     profiles:
       - cli
     networks:

@@ -6,7 +6,7 @@ A complete local AI stack that runs AI models locally with Ollama, integrated wi
 
 - **Ollama**: Model runtime and API (OpenAI-compatible)
 - **LibreChat**: Modern chat interface for interacting with AI models
-- **OpenClaw**: AI assistant gateway for multi-channel messaging
+- **OpenCode**: Open source AI coding agent (TUI)
 - **Models**: Directory for storing GGUF model files
 
 ## Quick Start
@@ -68,7 +68,6 @@ A complete local AI stack that runs AI models locally with Ollama, integrated wi
    - LibreChat: http://localhost:3080
    - Ollama API: http://localhost:11434
    - OpenAI-compatible endpoint: http://localhost:11434/v1/chat/completions
-   - OpenClaw Gateway: http://localhost:18789
 
 ## Configuration
 
@@ -82,29 +81,28 @@ The `librechat.yaml` is pre-configured to connect to your local Ollama instance.
 
 See the [LibreChat YAML configuration documentation](https://www.librechat.ai/docs/configuration/librechat_yaml) for details on configuring endpoints.
 
-### OpenClaw Configuration
+### OpenCode Configuration
 
-OpenClaw is an AI assistant gateway. Set the gateway token via environment variable:
+[OpenCode](https://github.com/anomalyco/opencode) is an open source AI coding agent that runs in the terminal.
+
+Run OpenCode interactively:
 ```bash
-export OPENCLAW_GATEWAY_TOKEN=your-secure-token
+docker compose run --rm opencode
 ```
 
-Or add to a `.env` file in the repo root. The gateway runs on port 18789 by default.
-
-To use the OpenClaw CLI interactively:
+To use a different model, set the `OPENCODE_MODEL` environment variable:
 ```bash
-docker compose run --rm openclaw-cli
+OPENCODE_MODEL=qwen3-coder:30b docker compose run --rm opencode
 ```
 
-Configuration and state are stored in `openclaw-data/`. See the [OpenClaw documentation](openclaw/docs/) for more details.
+Configuration is in `opencode/opencode.json`. The model provider is pre-configured for your local Ollama instance.
 
 ## Directory Structure
 
 ```
 local-ai-stack/
 ├── LibreChat/          # LibreChat frontend
-├── openclaw/           # OpenClaw AI gateway (submodule)
-├── openclaw-data/      # OpenClaw config and workspace
+├── opencode/           # OpenCode AI coding agent config
 ├── llama.cpp/          # llama.cpp library (submodule)
 ├── models/             # Model files directory (add your .gguf files here)
 ├── docker-compose.yml  # Master orchestration file

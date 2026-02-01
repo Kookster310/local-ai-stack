@@ -65,6 +65,34 @@ PY
 update_default_model "${repo_dir}/LibreChat/librechat.yaml"
 update_default_model "${repo_dir}/LibreChat/librechat.example.yaml"
 
+# Update OpenCode config
+update_opencode_model() {
+  local file="$1"
+  if [ ! -f "$file" ]; then
+    return
+  fi
+  python3 - "$file" "$default_model" <<'PY'
+import json
+import sys
+
+path = sys.argv[1]
+model = sys.argv[2]
+
+with open(path, "r", encoding="utf-8") as handle:
+    config = json.load(handle)
+
+if "model" not in config:
+    config["model"] = {}
+config["model"]["name"] = model
+
+with open(path, "w", encoding="utf-8") as handle:
+    json.dump(config, handle, indent=2)
+print(f"Updated OpenCode model in {path} to {model}")
+PY
+}
+
+update_opencode_model "${repo_dir}/opencode/opencode.json"
+
 echo "Done. Create a model with:"
 echo "  docker compose up -d  # ollama-init will create models"
 echo "  # if the stack is already running:"

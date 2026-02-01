@@ -1,0 +1,13 @@
+{
+  "$schema": "https://opencode.ai/config.schema.json",
+  "model": {
+    "provider": "ollama",
+    "name": "gpt-oss-20b"
+  },
+  "providers": {
+    "ollama": {
+      "baseUrl": "http://ollama:11434/v1",
+      "apiKey": "ollama-local"
+    }
+  }
+}
