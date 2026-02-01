@@ -6,8 +6,8 @@ RUN npm i -g opencode-ai@latest
 # Create non-root user for security
 RUN useradd -m -s /bin/bash opencode
 
-# Set up config directory
-RUN mkdir -p /home/opencode/.opencode && chown -R opencode:opencode /home/opencode
+# Set up config directory (OpenCode uses ~/.config/opencode/)
+RUN mkdir -p /home/opencode/.config/opencode && chown -R opencode:opencode /home/opencode
 
 USER opencode
 WORKDIR /workspace

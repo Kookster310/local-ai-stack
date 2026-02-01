@@ -81,9 +81,24 @@ model = sys.argv[2]
 with open(path, "r", encoding="utf-8") as handle:
     config = json.load(handle)
 
-if "model" not in config:
-    config["model"] = {}
-config["model"]["name"] = model
+# Ensure provider.ollama.models structure exists
+if "provider" not in config:
+    config["provider"] = {}
+if "ollama" not in config["provider"]:
+    config["provider"]["ollama"] = {
+        "npm": "@ai-sdk/openai-compatible",
+        "name": "Ollama (local)",
+        "options": {"baseURL": "http://ollama:11434/v1"},
+        "models": {}
+    }
+if "models" not in config["provider"]["ollama"]:
+    config["provider"]["ollama"]["models"] = {}
+
+# Add/update the model entry
+config["provider"]["ollama"]["models"][model] = {
+    "name": model,
+    "limit": {"context": 32768, "output": 8192}
+}
 
 with open(path, "w", encoding="utf-8") as handle:
     json.dump(config, handle, indent=2)

@@ -132,12 +132,9 @@ services:
       context: ./opencode
       dockerfile: Dockerfile
     environment:
-      - OPENCODE_MODEL_PROVIDER=ollama
-      - OPENCODE_BASE_URL=http://ollama:11434/v1
-      - OPENCODE_MODEL_NAME=${OPENCODE_MODEL:-gpt-oss-20b}
       - TERM=xterm-256color
     volumes:
-      - ./opencode/opencode.json:/home/opencode/.opencode/config.json:ro
+      - ./opencode/opencode.json:/home/opencode/.config/opencode/opencode.json:ro
       - ./:/workspace
     stdin_open: true
     tty: true
