@@ -12,7 +12,7 @@
     "models": {
       "providers": {
         "ollama": {
-          "baseUrl": "http://ollama:11434/v1/v1",
+          "baseUrl": "http://ollama:11434/v1",
           "apiKey": "not-required",
           "api": "openai-completions",
           "models": [
@@ -41,7 +41,7 @@
         "model": {
           "primary": "ollama/mistral-small-3.2-24B-Instruct-2506"
         },
-        "workspace": "/home/kookster/.openclaw/workspace",
+        "workspace": "/home/node/.openclaw/workspace",
         "compaction": {
           "mode": "safeguard"
         },
