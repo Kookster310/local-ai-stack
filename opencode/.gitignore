@@ -1,0 +1,17 @@
+# Credentials - NEVER commit
+credentials/
+
+# Logs
+logs/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Local scripts that may contain secrets
+scripts/*.local.py
+
+# Temporary files
+*.tmp
+*.temp

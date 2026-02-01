@@ -1,0 +1,78 @@
+# OpenCode SSH Hosts Configuration
+# Define network hosts that the agent can SSH into
+#
+# Usage: Reference these hosts from skills/ssh-management/SKILL.md
+# Keys should be stored in /workspace/credentials/
+
+hosts:
+  # Main TrueNAS Server - hosts all Docker services
+  truenas:
+    ip: 
+    port: 22
+    user: root
+    key: /workspace/credentials/id_rsa
+    description: "Main TrueNAS storage server with all Docker services"
+    services:
+      - docker
+      - zfs
+      - smb
+      - nfs
+    containers:
+      radarr:
+        port: 7878
+        description: "Movie management"
+      sonarr:
+        port: 8989
+        description: "TV show management"
+      prowlarr:
+        port: 9696
+        description: "Indexer management"
+      plex:
+        port: 32400
+        description: "Media streaming"
+      transmission:
+        port: 9091
+        description: "Torrent client"
+      # Add more containers as needed:
+      # bazarr:
+      #   port: 6767
+      #   description: "Subtitle management"
+      # overseerr:
+      #   port: 5055
+      #   description: "Request management"
+
+  # Example additional hosts - uncomment and customize as needed
+  # 
+  # proxmox:
+  #   ip: 192.168.1.10
+  #   port: 22
+  #   user: root
+  #   key: /workspace/credentials/id_rsa
+  #   description: "Proxmox hypervisor"
+  #
+  # pi-hole:
+  #   ip: 192.168.1.53
+  #   port: 22
+  #   user: pi
+  #   key: /workspace/credentials/id_rsa_pi
+  #   description: "Pi-hole DNS server"
+  #
+  # home-assistant:
+  #   ip: 192.168.1.20
+  #   port: 22
+  #   user: homeassistant
+  #   key: /workspace/credentials/id_rsa
+  #   description: "Home Assistant server"
+
+# Network ranges for discovery
+networks:
+  home:
+    range: 192.168.1.0/24
+    description: "Home network"
+
+# Default connection settings
+defaults:
+  port: 22
+  key: /workspace/credentials/id_rsa
+  timeout: 30
+  known_hosts_file: /workspace/credentials/known_hosts
