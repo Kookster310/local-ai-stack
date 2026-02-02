@@ -6,8 +6,10 @@ You are an AI agent for home infrastructure automation. This workspace contains 
 
 ```
 /workspace/
-├── AGENTS.md           # This file - your instructions
-├── SOUL.md             # Your persistent memory - READ and UPDATE this
+├── AGENTS.md           # This file - your instructions (read-only)
+├── MEMORY.md           # Facts and context - YOU CAN WRITE HERE
+├── SOUL.md             # Personality/preferences (read-only, propose changes)
+├── SOUL.md.proposals   # Propose SOUL.md changes here
 ├── hosts.yaml          # SSH host definitions
 ├── credentials/        # API keys and SSH keys (sensitive)
 ├── skills/             # Task-specific instructions
@@ -24,9 +26,10 @@ You are an AI agent for home infrastructure automation. This workspace contains 
 
 ## On Every Session Start
 
-1. **Read SOUL.md** to restore context from previous sessions
-2. **Check hosts.yaml** for available SSH hosts if the task involves remote systems
-3. **Reference the appropriate skill** in `skills/` for task-specific guidance
+1. **Read MEMORY.md** for facts and context from previous sessions
+2. **Read SOUL.md** for personality, preferences, and values
+3. **Check hosts.yaml** for available SSH hosts if the task involves remote systems
+4. **Reference the appropriate skill** in `skills/` for task-specific guidance
 
 ## Available Skills
 
@@ -46,25 +49,26 @@ Read `hosts.yaml` for connection details. The main host is `truenas` which runs 
 **User**: All hosts use the `aiagent` user (not root)  
 **Key**: `/workspace/credentials/id_rsa`
 
-## Persistent Memory (SOUL.md)
+## Memory System
 
-**IMPORTANT**: You have a persistent memory file at `/workspace/SOUL.md`.
+You have two memory files with different purposes:
 
-### Reading Memory
-At the start of each session, read SOUL.md to:
-- Recall learned user preferences
-- Check pending tasks from previous sessions
-- Review troubleshooting knowledge
+### MEMORY.md - Facts & Context (Read/Write)
 
-### Writing Memory - PROPOSALS ONLY
+**You CAN write directly to this file.** Use it for:
+- Infrastructure facts discovered (IPs, services, configurations)
+- Session summaries and pending tasks
+- Technical knowledge learned
+- Quick reference information
+- Anything that needs to persist between sessions immediately
 
-**DO NOT modify SOUL.md directly.** Instead, append proposals to `/workspace/SOUL.md.proposals`.
+Update MEMORY.md whenever you learn something important.
 
-The user reviews proposals weekly and merges relevant ones into SOUL.md.
+### SOUL.md - Personality & Preferences (Read-Only)
 
-### Proposal Format
+**DO NOT modify SOUL.md directly.** This contains your identity, values, and learned preferences.
 
-When proposing updates, append to SOUL.md.proposals using this format:
+To propose changes, append to `/workspace/SOUL.md.proposals`:
 
 ```markdown
 ### YYYY-MM-DD - Brief Title
@@ -73,18 +77,20 @@ When proposing updates, append to SOUL.md.proposals using this format:
 \`\`\`
 Content to add to that section
 \`\`\`
-
-**Section: [Another Section]**
-\`\`\`
-More content
-\`\`\`
 ```
 
-### What to Propose
-- **Learned Preferences**: User habits, preferred formats
-- **Knowledge Base**: Troubleshooting notes, infrastructure details
-- **Evolution Log**: Significant learnings (with date)
-- **Session Memory**: Important context for future sessions
+The user reviews proposals weekly and merges approved ones.
+
+### When to Use Which
+
+| Type of Information | Write To |
+|---------------------|----------|
+| Discovered IP address | MEMORY.md |
+| User prefers brief responses | SOUL.md.proposals |
+| TrueNAS has 5 containers | MEMORY.md |
+| Learned user works nights | SOUL.md.proposals |
+| Last session summary | MEMORY.md |
+| Reflection on growth | SOUL.md.proposals |
 
 ## Credentials
 
@@ -118,10 +124,10 @@ Log task outputs to `/workspace/logs/` for audit trail:
 
 When asked "check the TrueNAS server":
 
-1. Read `SOUL.md` for any relevant context
+1. Read `MEMORY.md` for any relevant context (IPs, last status)
 2. Read `hosts.yaml` to get TrueNAS connection details
 3. Read `skills/truenas/SKILL.md` for operations guidance
 4. Connect via SSH using `skills/ssh-management/SKILL.md`
 5. Perform checks as documented in the skill
-6. Update `SOUL.md` with findings if noteworthy
+6. Update `MEMORY.md` with findings (container status, issues found)
 7. Log results to `/workspace/logs/truenas.log`

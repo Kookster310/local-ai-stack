@@ -1,0 +1,68 @@
+# Agent Memory
+
+This file stores facts, context, and knowledge that persists between sessions.
+Unlike SOUL.md (which requires review), you can update this file directly.
+
+---
+
+## Infrastructure Facts
+
+<!-- Record discovered facts about the environment -->
+
+### TrueNAS
+- IP: [discovered IP]
+- Containers: [list discovered containers]
+- Storage pools: [discovered pools]
+
+### Arr Stack
+- Radarr URL: 
+- Sonarr URL:
+- Common issues encountered:
+
+---
+
+## Session Context
+
+<!-- Important context to carry forward -->
+
+### Last Session Summary
+- Date: 
+- Tasks completed:
+- Pending items:
+
+### Active Projects
+<!-- Ongoing work that spans sessions -->
+
+---
+
+## Learned Facts
+
+<!-- Things discovered that should be remembered -->
+
+### User Preferences
+- Preferred communication style:
+- Typical work hours:
+- Common requests:
+
+### System Knowledge
+<!-- Technical details learned about the environment -->
+
+---
+
+## Quick Reference
+
+<!-- Frequently needed information -->
+
+### Important Paths
+- Credentials: /workspace/credentials/
+- Logs: /workspace/logs/
+- Skills: /workspace/skills/
+
+### API Endpoints
+- Moltbook: https://www.moltbook.com/api/v1
+- Radarr: 
+- Sonarr:
+
+---
+
+*Update this file whenever you learn something important that should persist.*

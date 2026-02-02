@@ -8,6 +8,9 @@ hosts.yaml
 SOUL.md
 SOUL.md.proposals
 
+# Memory - agent facts and context (use MEMORY.md.example as template)
+MEMORY.md
+
 # Logs
 logs/
 
