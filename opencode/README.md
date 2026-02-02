@@ -8,6 +8,7 @@ This directory contains the configuration and skills for the OpenCode AI agent, 
 opencode/
 ├── Dockerfile              # Container build configuration
 ├── opencode.json           # OpenCode configuration (Ollama provider)
+├── AGENTS.md               # Agent startup instructions (read on every session)
 ├── hosts.yaml              # SSH host definitions
 ├── SOUL.md                 # Agent memory and evolution document
 ├── credentials/            # Sensitive credentials (gitignored)
@@ -44,18 +45,31 @@ opencode/
 
 ### 1. Configure Hosts
 
-Edit `hosts.yaml` to add your network hosts:
+Copy `hosts.yaml.example` to `hosts.yaml` and fill in your IP addresses:
 
-```yaml
-hosts:
-  truenas:
-    ip: 192.168.1.100
-    port: 22
-    user: root
-    key: /workspace/credentials/id_rsa
+```bash
+cp opencode/hosts.yaml.example opencode/hosts.yaml
+# Edit hosts.yaml with your actual IPs
 ```
 
-### 2. Add Credentials
+The `hosts.yaml` file is gitignored since it contains network-specific information.
+
+### 2. Create aiagent User on Hosts
+
+Create a dedicated `aiagent` user on each host for the agent to SSH into:
+
+```bash
+# On TrueNAS/Linux hosts
+sudo useradd -m -s /bin/bash aiagent
+sudo usermod -aG docker aiagent  # For container management
+
+# Copy SSH public key
+sudo mkdir -p /home/aiagent/.ssh
+sudo cp ~/.ssh/authorized_keys /home/aiagent/.ssh/
+sudo chown -R aiagent:aiagent /home/aiagent/.ssh
+```
+
+### 3. Add Credentials
 
 Copy your SSH keys and API credentials to the `credentials/` directory:
 
@@ -75,7 +89,7 @@ sonarr:
 EOF
 ```
 
-### 3. Build and Run
+### 4. Build and Run
 
 ```bash
 # Build the container
@@ -87,6 +101,15 @@ docker compose run --rm opencode
 # Or run with a specific command
 docker compose run --rm opencode "Check TrueNAS container health"
 ```
+
+## AGENTS.md
+
+The `AGENTS.md` file contains instructions that OpenCode reads at the start of every session. It tells the agent about:
+
+- Workspace structure and available files
+- How to use skills for different tasks
+- SSH host configuration in `hosts.yaml`
+- How to read and update `SOUL.md` for persistent memory
 
 ## SOUL.md
 
@@ -100,6 +123,10 @@ The `SOUL.md` file serves as the agent's evolving memory. The agent can update t
 This allows the agent to improve over time and maintain continuity across sessions.
 
 **Setup**: Copy `SOUL.md.example` to `SOUL.md` to initialize. The actual `SOUL.md` is gitignored since it contains personal agent evolution data.
+
+The agent is instructed (via AGENTS.md) to:
+1. Read SOUL.md at the start of each session
+2. Update it after completing tasks or learning something new
 
 ## Volumes
 

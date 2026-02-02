@@ -1,6 +1,9 @@
 # Credentials - NEVER commit
 credentials/
 
+# Hosts - contains IP addresses (use hosts.yaml.example as template)
+hosts.yaml
+
 # Soul - personal agent evolution (use SOUL.md.example as template)
 SOUL.md
 

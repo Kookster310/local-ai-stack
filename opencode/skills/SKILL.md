@@ -20,7 +20,8 @@ This directory contains skills that extend OpenCode's capabilities for automatio
 
 ## Configuration Files
 
-- **hosts.yaml**: SSH endpoints and connection details → `../hosts.yaml`
+- **AGENTS.md**: Startup instructions (read every session) → `../AGENTS.md`
+- **hosts.yaml**: SSH endpoints and connection details → `../hosts.yaml` (copy from `hosts.yaml.example`)
 - **SOUL.md**: Agent memory and evolution → `../SOUL.md` (copy from `SOUL.md.example`)
 
 ## Usage

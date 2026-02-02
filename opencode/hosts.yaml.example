@@ -1,15 +1,15 @@
 # OpenCode SSH Hosts Configuration
 # Define network hosts that the agent can SSH into
 #
-# Usage: Reference these hosts from skills/ssh-management/SKILL.md
+# Usage: Copy this file to hosts.yaml and fill in your IP addresses
 # Keys should be stored in /workspace/credentials/
 
 hosts:
   # Main TrueNAS Server - hosts all Docker services
   truenas:
-    ip: 
+    ip: 192.168.x.x          # <-- Set your TrueNAS IP
     port: 22
-    user: root
+    user: aiagent
     key: /workspace/credentials/id_rsa
     description: "Main TrueNAS storage server with all Docker services"
     services:
@@ -44,34 +44,35 @@ hosts:
   # Example additional hosts - uncomment and customize as needed
   # 
   # proxmox:
-  #   ip: 192.168.1.10
+  #   ip: 192.168.x.x        # <-- Set your Proxmox IP
   #   port: 22
-  #   user: root
+  #   user: aiagent
   #   key: /workspace/credentials/id_rsa
   #   description: "Proxmox hypervisor"
   #
   # pi-hole:
-  #   ip: 192.168.1.53
+  #   ip: 192.168.x.x        # <-- Set your Pi-hole IP
   #   port: 22
-  #   user: pi
-  #   key: /workspace/credentials/id_rsa_pi
+  #   user: aiagent
+  #   key: /workspace/credentials/id_rsa
   #   description: "Pi-hole DNS server"
   #
   # home-assistant:
-  #   ip: 192.168.1.20
+  #   ip: 192.168.x.x        # <-- Set your Home Assistant IP
   #   port: 22
-  #   user: homeassistant
+  #   user: aiagent
   #   key: /workspace/credentials/id_rsa
   #   description: "Home Assistant server"
 
 # Network ranges for discovery
 networks:
   home:
-    range: 192.168.1.0/24
+    range: 192.168.x.0/24    # <-- Set your network range
     description: "Home network"
 
 # Default connection settings
 defaults:
+  user: aiagent
   port: 22
   key: /workspace/credentials/id_rsa
   timeout: 30
