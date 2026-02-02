@@ -97,7 +97,7 @@ The user reviews proposals weekly and merges approved ones.
 Sensitive files are in `/workspace/credentials/`:
 - `id_rsa` - SSH private key
 - `arr-config.yaml` - Radarr/Sonarr API keys
-- `gmail-credentials.json` - Google OAuth
+- `gmail-credentials.json` - Gmail email/app password for IMAP/SMTP
 - `moltbook-credentials.json` - Moltbook API key (also at `~/.config/moltbook/credentials.json`)
 
 **Never log or display credential contents.**

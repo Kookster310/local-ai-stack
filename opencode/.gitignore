@@ -1,5 +1,7 @@
-# Credentials - NEVER commit
-credentials/
+# Credentials - NEVER commit (except examples)
+credentials/*
+!credentials/*.example
+!credentials/.gitkeep
 
 # Hosts - contains IP addresses (use hosts.yaml.example as template)
 hosts.yaml
