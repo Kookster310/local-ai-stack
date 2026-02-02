@@ -9,8 +9,8 @@ opencode/
 ├── Dockerfile              # Container build configuration
 ├── opencode.json           # OpenCode configuration (Ollama provider)
 ├── AGENTS.md               # Agent startup instructions (read on every session)
-├── hosts.yaml              # SSH host definitions
-├── SOUL.md                 # Agent memory and evolution document
+├── hosts.yaml.example      # SSH host template (copy to hosts.yaml)
+├── SOUL.md.example         # Agent memory template (copy to SOUL.md)
 ├── credentials/            # Sensitive credentials (gitignored)
 │   ├── id_rsa              # SSH private key
 │   ├── gmail-credentials.json
@@ -21,13 +21,12 @@ opencode/
 │   ├── gmail-cleanup/
 │   ├── ssh-management/
 │   ├── truenas/
-│   ├── arr-stack/
 │   ├── moltbook/
 │   ├── blog/
 │   └── cron-tasks/
-├── scripts/                # Automation scripts (created at runtime)
-├── logs/                   # Task execution logs
-└── cron/                   # Cron task definitions
+├── scripts/                # Automation scripts
+│   └── daemon.sh           # Daemon mode entrypoint
+└── logs/                   # Task execution logs (gitignored)
 ```
 
 ## Skills
@@ -95,11 +94,40 @@ EOF
 # Build the container
 docker compose build opencode
 
-# Run interactively
+# Run interactively (one-off)
 docker compose run --rm opencode
 
 # Or run with a specific command
 docker compose run --rm opencode "Check TrueNAS container health"
+```
+
+## Daemon Mode
+
+Run the agent as a persistent container that stays running:
+
+```bash
+# Start the daemon
+docker compose up -d opencode-daemon
+
+# Run a task
+docker exec opencode-daemon opencode "Check TrueNAS container health"
+
+# View container logs
+docker compose logs -f opencode-daemon
+
+# Check task execution logs
+ls -la opencode/logs/
+
+# Stop the daemon
+docker compose stop opencode-daemon
+```
+
+You can trigger tasks from the host's crontab or any external scheduler:
+
+```bash
+# Example: Add to host crontab for daily 11 PM check
+# crontab -e
+0 23 * * * docker exec opencode-daemon opencode "Check TrueNAS health"
 ```
 
 ## AGENTS.md

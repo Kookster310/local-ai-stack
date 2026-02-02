@@ -7,7 +7,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3-venv \
     openssh-client \
     git \
-    cron \
     && rm -rf /var/lib/apt/lists/*
 
 # Install OpenCode globally
@@ -23,7 +22,6 @@ RUN mkdir -p /home/opencode/.config/opencode && chown -R opencode:opencode /home
 RUN mkdir -p /workspace/skills \
     /workspace/credentials \
     /workspace/logs \
-    /workspace/cron \
     /workspace/scripts \
     && chown -R opencode:opencode /workspace
 
@@ -33,6 +31,12 @@ COPY --chown=opencode:opencode AGENTS.md /workspace/AGENTS.md
 COPY --chown=opencode:opencode hosts.yaml.example /workspace/hosts.yaml
 COPY --chown=opencode:opencode SOUL.md.example /workspace/SOUL.md
 COPY --chown=opencode:opencode skills/ /workspace/skills/
+
+# Copy scripts
+COPY --chown=opencode:opencode scripts/ /workspace/scripts/
+
+# Make scripts executable
+RUN chmod +x /workspace/scripts/*.sh
 
 USER opencode
 WORKDIR /workspace

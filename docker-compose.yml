@@ -145,6 +145,29 @@ services:
     networks:
       - ai-stack-network
 
+  # OpenCode Daemon - Persistent container for running tasks
+  # Start with: docker compose up -d opencode-daemon
+  # Run tasks: docker exec opencode-daemon opencode "your task here"
+  opencode-daemon:
+    container_name: opencode-daemon
+    build:
+      context: ./opencode
+      dockerfile: Dockerfile
+    entrypoint: ["/workspace/scripts/daemon.sh"]
+    environment:
+      - TERM=xterm-256color
+    volumes:
+      - ./opencode/opencode.json:/home/opencode/.config/opencode/opencode.json:ro
+      - ./opencode/hosts.yaml:/workspace/hosts.yaml:ro
+      - ./opencode/SOUL.md:/workspace/SOUL.md
+      - ./opencode/credentials:/workspace/credentials:ro
+      - ./opencode/logs:/workspace/logs
+    depends_on:
+      - ollama
+    restart: unless-stopped
+    networks:
+      - ai-stack-network
+
 volumes:
   pgdata2:
 
