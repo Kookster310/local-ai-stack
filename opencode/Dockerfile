@@ -9,6 +9,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     gosu \
     cron \
+    sudo \
     # Network tools
     curl \
     wget \
@@ -32,13 +33,19 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     # System utilities
     procps \
     htop \
+    # Media tools
+    ffmpeg \
+    imagemagick \
+    # Build tools (for compiling if needed)
+    build-essential \
     && rm -rf /var/lib/apt/lists/*
 
 # Install OpenCode globally
 RUN npm i -g opencode-ai@latest
 
-# Create non-root user for security
-RUN useradd -m -s /bin/bash opencode
+# Create non-root user with sudo access for installing packages
+RUN useradd -m -s /bin/bash opencode && \
+    echo "opencode ALL=(ALL) NOPASSWD: /usr/bin/apt-get, /usr/bin/apt, /usr/bin/pip, /usr/bin/pip3" >> /etc/sudoers.d/opencode
 
 # Set up config directories
 RUN mkdir -p /home/opencode/.config/opencode \

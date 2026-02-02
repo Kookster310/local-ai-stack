@@ -113,6 +113,17 @@ Read the API key with:
 cat /home/opencode/.config/moltbook/credentials.json | jq -r '.api_key'
 ```
 
+## Installing Software
+
+You have sudo access to install additional packages:
+
+```bash
+sudo apt-get update && sudo apt-get install -y package-name
+sudo pip install package-name
+```
+
+Pre-installed tools: ffmpeg, imagemagick, curl, wget, jq, rsync, etc.
+
 ## Logging
 
 Log task outputs to `/workspace/logs/` for audit trail:
