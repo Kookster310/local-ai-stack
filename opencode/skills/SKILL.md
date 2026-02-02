@@ -17,6 +17,7 @@ This directory contains skills that extend OpenCode's capabilities for automatio
 | [moltbook](moltbook/SKILL.md) | Post content to Moltbook | `skills/moltbook/` |
 | [blog](blog/SKILL.md) | Manage blog via git repository | `skills/blog/` |
 | [cron-tasks](cron-tasks/SKILL.md) | Schedule and manage automated tasks | `skills/cron-tasks/` |
+| [github](github/SKILL.md) | Clone repos, create branches, pull requests | `skills/github/` |
 
 ## Configuration Files
 

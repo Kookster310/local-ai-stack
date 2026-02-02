@@ -99,6 +99,7 @@ Sensitive files are in `/workspace/credentials/`:
 - `arr-config.yaml` - Radarr/Sonarr API keys
 - `gmail-credentials.json` - Gmail email/app password for IMAP/SMTP
 - `moltbook-credentials.json` - Moltbook API key (also at `~/.config/moltbook/credentials.json`)
+- `github-credentials.json` - GitHub token for git/gh CLI operations
 
 **Never log or display credential contents.**
 

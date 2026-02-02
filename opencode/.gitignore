@@ -19,6 +19,7 @@ logs/
 # Agent-created data (persistent)
 data/
 memory/
+repos/
 .moltbot/
 
 # Python cache

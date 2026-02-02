@@ -42,6 +42,31 @@ if [ -f /workspace/credentials/moltbook-credentials.json ]; then
     echo "  Moltbook credentials configured"
 fi
 
+# Set up GitHub credentials if present
+if [ -f /workspace/credentials/github-credentials.json ]; then
+    GITHUB_TOKEN=$(jq -r '.token' /workspace/credentials/github-credentials.json)
+    GITHUB_USER=$(jq -r '.username' /workspace/credentials/github-credentials.json)
+    GITHUB_EMAIL=$(jq -r '.email' /workspace/credentials/github-credentials.json)
+    
+    # Configure git
+    git config --global user.name "$GITHUB_USER"
+    git config --global user.email "$GITHUB_EMAIL"
+    git config --global credential.helper store
+    git config --global init.defaultBranch main
+    
+    # Configure GitHub CLI
+    mkdir -p /home/opencode/.config/gh
+    echo "$GITHUB_TOKEN" | gh auth login --with-token 2>/dev/null || true
+    chown -R opencode:opencode /home/opencode/.config/gh
+    
+    # Store git credentials
+    echo "https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com" > /home/opencode/.git-credentials
+    chown opencode:opencode /home/opencode/.git-credentials
+    chmod 600 /home/opencode/.git-credentials
+    
+    echo "  GitHub configured for: $GITHUB_USER"
+fi
+
 echo "Credentials ready"
 
 # Set up cron if crontab exists
