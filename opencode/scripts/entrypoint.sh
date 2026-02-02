@@ -44,28 +44,35 @@ fi
 
 # Set up GitHub credentials if present
 if [ -f /workspace/credentials/github-credentials.json ]; then
-    GITHUB_TOKEN=$(jq -r '.token' /workspace/credentials/github-credentials.json)
-    GITHUB_TOKEN_OWNER=$(jq -r '.token_owner' /workspace/credentials/github-credentials.json)
     GITHUB_COMMIT_NAME=$(jq -r '.commit_name' /workspace/credentials/github-credentials.json)
     GITHUB_COMMIT_EMAIL=$(jq -r '.commit_email' /workspace/credentials/github-credentials.json)
+    GITHUB_APP_ID=$(jq -r '.app_id // empty' /workspace/credentials/github-credentials.json)
     
-    # Configure git commit identity (can be agent's name)
+    # Configure git commit identity
     git config --global user.name "$GITHUB_COMMIT_NAME"
     git config --global user.email "$GITHUB_COMMIT_EMAIL"
-    git config --global credential.helper store
     git config --global init.defaultBranch main
     
-    # Configure GitHub CLI
-    mkdir -p /home/opencode/.config/gh
-    echo "$GITHUB_TOKEN" | gh auth login --with-token 2>/dev/null || true
-    chown -R opencode:opencode /home/opencode/.config/gh
+    # Set up credential helper to use our token generator
+    git config --global credential.helper '!/workspace/scripts/git-credential-github-app.sh'
     
-    # Store git credentials (uses token owner for auth)
-    echo "https://${GITHUB_TOKEN_OWNER}:${GITHUB_TOKEN}@github.com" > /home/opencode/.git-credentials
-    chown opencode:opencode /home/opencode/.git-credentials
-    chmod 600 /home/opencode/.git-credentials
-    
-    echo "  GitHub configured - commits as: $GITHUB_COMMIT_NAME <$GITHUB_COMMIT_EMAIL>"
+    # Generate initial token for gh CLI
+    if [ -n "$GITHUB_APP_ID" ]; then
+        PRIVATE_KEY_FILE=$(jq -r '.private_key_file' /workspace/credentials/github-credentials.json)
+        if [ -f "/workspace/credentials/$PRIVATE_KEY_FILE" ]; then
+            GITHUB_TOKEN=$(python3 /workspace/scripts/github-token.py 2>/dev/null || echo "")
+            if [ -n "$GITHUB_TOKEN" ]; then
+                mkdir -p /home/opencode/.config/gh
+                echo "$GITHUB_TOKEN" | gh auth login --with-token 2>/dev/null || true
+                chown -R opencode:opencode /home/opencode/.config/gh
+                echo "  GitHub App configured - commits as: $GITHUB_COMMIT_NAME"
+            else
+                echo "  Warning: Could not generate GitHub token"
+            fi
+        else
+            echo "  Warning: GitHub private key file not found"
+        fi
+    fi
 fi
 
 echo "Credentials ready"

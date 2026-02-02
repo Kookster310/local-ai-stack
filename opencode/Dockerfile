@@ -86,6 +86,7 @@ RUN python3 -m venv /home/opencode/venv && \
     paramiko \
     pyyaml \
     requests \
+    pyjwt[crypto] \
     google-auth \
     google-auth-oauthlib \
     google-api-python-client

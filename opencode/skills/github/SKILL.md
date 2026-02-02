@@ -9,18 +9,22 @@ Clone repos, create branches, and submit pull requests.
 
 ## Credentials
 
-Credentials at `/workspace/credentials/github-credentials.json`:
+Uses GitHub App authentication. Credentials at `/workspace/credentials/github-credentials.json`:
 
 ```json
 {
-  "token": "ghp_xxxx",
-  "username": "your-username",
-  "email": "your-email@example.com",
+  "app_id": "123456",
+  "installation_id": "12345678",
+  "private_key_file": "github-app-private-key.pem",
+  "commit_name": "OpenCode Agent",
+  "commit_email": "agent@example.com",
   "default_repo": "owner/repo-name"
 }
 ```
 
-Git and `gh` CLI are pre-configured by the entrypoint.
+Also place your GitHub App private key at `/workspace/credentials/github-app-private-key.pem`.
+
+Git and `gh` CLI are pre-configured. Tokens are generated automatically (valid 1 hour, refreshed as needed).
 
 ---
 
