@@ -13,19 +13,30 @@ mkdir -p /workspace/logs
 mkdir -p /workspace/credentials
 
 # Copy credentials and fix permissions (mounted read-only, need writable copy)
+echo "Looking for credentials..."
 if [ -d /mnt/credentials ]; then
-    echo "Setting up credentials..."
-    cp -r /mnt/credentials/* /workspace/credentials/ 2>/dev/null || true
+    echo "  Found /mnt/credentials"
+    ls -la /mnt/credentials/
+    
+    echo "Copying credentials..."
+    cp -rv /mnt/credentials/* /workspace/credentials/
     
     # Fix SSH key permissions
     if [ -f /workspace/credentials/id_rsa ]; then
         chmod 600 /workspace/credentials/id_rsa
         echo "  SSH key ready"
+    else
+        echo "  Warning: No id_rsa found after copy"
     fi
     
     # Fix any other credential files
     chmod 600 /workspace/credentials/*.yaml 2>/dev/null || true
     chmod 600 /workspace/credentials/*.json 2>/dev/null || true
+    
+    echo "Credentials directory:"
+    ls -la /workspace/credentials/
+else
+    echo "  Warning: /mnt/credentials not found"
 fi
 
 echo ""
