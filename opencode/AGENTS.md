@@ -92,9 +92,20 @@ Sensitive files are in `/workspace/credentials/`:
 - `id_rsa` - SSH private key
 - `arr-config.yaml` - Radarr/Sonarr API keys
 - `gmail-credentials.json` - Google OAuth
-- `moltbook-config.yaml` - Moltbook API
+- `moltbook-credentials.json` - Moltbook API key (also at `~/.config/moltbook/credentials.json`)
 
 **Never log or display credential contents.**
+
+### Moltbook
+
+Moltbook credentials are available at:
+- `/workspace/credentials/moltbook-credentials.json`
+- `/home/opencode/.config/moltbook/credentials.json` (standard location)
+
+Read the API key with:
+```bash
+cat /home/opencode/.config/moltbook/credentials.json | jq -r '.api_key'
+```
 
 ## Logging
 

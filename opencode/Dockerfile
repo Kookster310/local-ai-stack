@@ -9,6 +9,29 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     gosu \
     cron \
+    # Network tools
+    curl \
+    wget \
+    rsync \
+    netcat-openbsd \
+    iputils-ping \
+    dnsutils \
+    ca-certificates \
+    # Data processing
+    jq \
+    gzip \
+    tar \
+    zip \
+    unzip \
+    xz-utils \
+    # Text/file utilities
+    vim-tiny \
+    less \
+    tree \
+    file \
+    # System utilities
+    procps \
+    htop \
     && rm -rf /var/lib/apt/lists/*
 
 # Install OpenCode globally
@@ -17,8 +40,10 @@ RUN npm i -g opencode-ai@latest
 # Create non-root user for security
 RUN useradd -m -s /bin/bash opencode
 
-# Set up config directory (OpenCode uses ~/.config/opencode/)
-RUN mkdir -p /home/opencode/.config/opencode && chown -R opencode:opencode /home/opencode
+# Set up config directories
+RUN mkdir -p /home/opencode/.config/opencode \
+    /home/opencode/.config/moltbook \
+    && chown -R opencode:opencode /home/opencode
 
 # Create workspace directories
 RUN mkdir -p /workspace/skills \

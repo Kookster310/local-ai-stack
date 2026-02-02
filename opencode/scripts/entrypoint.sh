@@ -30,6 +30,15 @@ if [ -d /mnt/credentials ]; then
         fi
     done
     
+    # Set up Moltbook credentials if present
+    if [ -f /workspace/credentials/moltbook-credentials.json ]; then
+        mkdir -p /home/opencode/.config/moltbook
+        cp /workspace/credentials/moltbook-credentials.json /home/opencode/.config/moltbook/credentials.json
+        chown -R opencode:opencode /home/opencode/.config/moltbook
+        chmod 600 /home/opencode/.config/moltbook/credentials.json
+        echo "  Moltbook credentials configured"
+    fi
+    
     echo "Credentials ready"
 else
     echo "Warning: /mnt/credentials not found"
