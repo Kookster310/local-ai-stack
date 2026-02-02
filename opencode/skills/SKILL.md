@@ -18,6 +18,7 @@ This directory contains skills that extend OpenCode's capabilities for automatio
 | [blog](blog/SKILL.md) | Manage blog via git repository | `skills/blog/` |
 | [cron-tasks](cron-tasks/SKILL.md) | Schedule and manage automated tasks | `skills/cron-tasks/` |
 | [github](github/SKILL.md) | Clone repos, create branches, pull requests | `skills/github/` |
+| [discord](discord/SKILL.md) | Read and post to Discord channels | `skills/discord/` |
 
 ## Configuration Files
 
