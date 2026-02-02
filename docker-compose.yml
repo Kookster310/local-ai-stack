@@ -153,9 +153,11 @@ services:
     build:
       context: ./opencode
       dockerfile: Dockerfile
+    user: "${UID:-1000}:${GID:-1000}"
     entrypoint: ["/workspace/scripts/daemon.sh"]
     environment:
       - TERM=xterm-256color
+      - HOME=/home/opencode
     volumes:
       - ./opencode/opencode.json:/home/opencode/.config/opencode/opencode.json:ro
       - ./opencode/hosts.yaml:/workspace/hosts.yaml:ro
