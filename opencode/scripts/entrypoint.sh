@@ -45,12 +45,13 @@ fi
 # Set up GitHub credentials if present
 if [ -f /workspace/credentials/github-credentials.json ]; then
     GITHUB_TOKEN=$(jq -r '.token' /workspace/credentials/github-credentials.json)
-    GITHUB_USER=$(jq -r '.username' /workspace/credentials/github-credentials.json)
-    GITHUB_EMAIL=$(jq -r '.email' /workspace/credentials/github-credentials.json)
+    GITHUB_TOKEN_OWNER=$(jq -r '.token_owner' /workspace/credentials/github-credentials.json)
+    GITHUB_COMMIT_NAME=$(jq -r '.commit_name' /workspace/credentials/github-credentials.json)
+    GITHUB_COMMIT_EMAIL=$(jq -r '.commit_email' /workspace/credentials/github-credentials.json)
     
-    # Configure git
-    git config --global user.name "$GITHUB_USER"
-    git config --global user.email "$GITHUB_EMAIL"
+    # Configure git commit identity (can be agent's name)
+    git config --global user.name "$GITHUB_COMMIT_NAME"
+    git config --global user.email "$GITHUB_COMMIT_EMAIL"
     git config --global credential.helper store
     git config --global init.defaultBranch main
     
@@ -59,12 +60,12 @@ if [ -f /workspace/credentials/github-credentials.json ]; then
     echo "$GITHUB_TOKEN" | gh auth login --with-token 2>/dev/null || true
     chown -R opencode:opencode /home/opencode/.config/gh
     
-    # Store git credentials
-    echo "https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com" > /home/opencode/.git-credentials
+    # Store git credentials (uses token owner for auth)
+    echo "https://${GITHUB_TOKEN_OWNER}:${GITHUB_TOKEN}@github.com" > /home/opencode/.git-credentials
     chown opencode:opencode /home/opencode/.git-credentials
     chmod 600 /home/opencode/.git-credentials
     
-    echo "  GitHub configured for: $GITHUB_USER"
+    echo "  GitHub configured - commits as: $GITHUB_COMMIT_NAME <$GITHUB_COMMIT_EMAIL>"
 fi
 
 echo "Credentials ready"
