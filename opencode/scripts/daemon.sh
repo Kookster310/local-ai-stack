@@ -13,9 +13,9 @@ mkdir -p /workspace/logs
 mkdir -p /workspace/credentials
 
 # Copy credentials and fix permissions (mounted read-only, need writable copy)
-if [ -d /workspace/credentials-mount ]; then
+if [ -d /mnt/credentials ]; then
     echo "Setting up credentials..."
-    cp -r /workspace/credentials-mount/* /workspace/credentials/ 2>/dev/null || true
+    cp -r /mnt/credentials/* /workspace/credentials/ 2>/dev/null || true
     
     # Fix SSH key permissions
     if [ -f /workspace/credentials/id_rsa ]; then
