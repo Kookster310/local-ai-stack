@@ -7,6 +7,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3-venv \
     openssh-client \
     git \
+    gosu \
     && rm -rf /var/lib/apt/lists/*
 
 # Install OpenCode globally
@@ -38,7 +39,7 @@ COPY --chown=opencode:opencode scripts/ /workspace/scripts/
 # Make scripts executable
 RUN chmod +x /workspace/scripts/*.sh
 
-USER opencode
+# Stay as root for entrypoint (it drops to opencode user)
 WORKDIR /workspace
 
 # Install Python dependencies for skills
