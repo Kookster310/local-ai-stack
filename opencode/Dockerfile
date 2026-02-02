@@ -8,6 +8,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     openssh-client \
     git \
     gosu \
+    cron \
     && rm -rf /var/lib/apt/lists/*
 
 # Install OpenCode globally

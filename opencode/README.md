@@ -25,7 +25,11 @@ opencode/
 │   ├── blog/
 │   └── cron-tasks/
 ├── scripts/                # Automation scripts
-│   └── daemon.sh           # Daemon mode entrypoint
+│   ├── entrypoint.sh       # Container entrypoint (runs as root)
+│   ├── daemon.sh           # Daemon mode (runs as opencode)
+│   └── run-task.sh         # Execute single task with logging
+├── cron/                   # Scheduled tasks
+│   └── crontab             # Cron schedule definition
 └── logs/                   # Task execution logs (gitignored)
 ```
 
@@ -109,8 +113,8 @@ Run the agent as a persistent container that stays running:
 # Start the daemon
 docker compose up -d opencode-daemon
 
-# Run a task
-docker exec opencode-daemon opencode "Check TrueNAS container health"
+# Run a task manually
+docker exec -it opencode-daemon opencode "Check TrueNAS container health"
 
 # View container logs
 docker compose logs -f opencode-daemon
@@ -122,12 +126,24 @@ ls -la opencode/logs/
 docker compose stop opencode-daemon
 ```
 
-You can trigger tasks from the host's crontab or any external scheduler:
+## Scheduled Tasks (Cron)
+
+The daemon runs cron for scheduled tasks. Edit `cron/crontab` to configure:
 
 ```bash
-# Example: Add to host crontab for daily 11 PM check
-# crontab -e
-0 23 * * * docker exec opencode-daemon opencode "Check TrueNAS health"
+# Default: Nightly reflection at 11 PM
+0 23 * * * /workspace/scripts/run-task.sh "Perform nightly reflection..." reflection
+
+# Add your own tasks:
+0 8 * * * /workspace/scripts/run-task.sh "Morning health check" morning-check
+```
+
+The container uses your host's timezone (via `/etc/localtime` mount).
+
+After editing the crontab, restart the daemon to apply changes:
+
+```bash
+docker compose restart opencode-daemon
 ```
 
 ## AGENTS.md

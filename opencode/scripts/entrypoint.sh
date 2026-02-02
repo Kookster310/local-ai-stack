@@ -1,11 +1,13 @@
 #!/bin/bash
 # OpenCode Entrypoint
 #
-# Runs as root to set up credentials, then drops to opencode user
+# Runs as root to set up credentials and cron, then drops to opencode user
 
 set -e
 
 echo "=== OpenCode Entrypoint ==="
+echo "Timezone: $(cat /etc/timezone 2>/dev/null || echo 'unknown')"
+echo "Local time: $(date)"
 
 # Ensure directories exist and are owned by opencode
 mkdir -p /workspace/logs
@@ -31,6 +33,22 @@ if [ -d /mnt/credentials ]; then
     echo "Credentials ready"
 else
     echo "Warning: /mnt/credentials not found"
+fi
+
+# Set up cron if crontab exists
+if [ -f /workspace/cron/crontab ]; then
+    echo "Setting up cron..."
+    
+    # Install crontab for opencode user
+    crontab -u opencode /workspace/cron/crontab
+    
+    # Start cron daemon
+    service cron start
+    
+    echo "Cron installed. Schedule:"
+    crontab -u opencode -l | grep -v "^#" | grep -v "^$" || echo "  (no active jobs)"
+else
+    echo "No crontab found at /workspace/cron/crontab"
 fi
 
 # Drop to opencode user and run the command

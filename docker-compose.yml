@@ -163,6 +163,9 @@ services:
       - ./opencode/SOUL.md:/workspace/SOUL.md
       - ./opencode/credentials:/mnt/credentials:ro
       - ./opencode/logs:/workspace/logs
+      - ./opencode/cron:/workspace/cron:ro
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
     depends_on:
       - ollama
     restart: unless-stopped

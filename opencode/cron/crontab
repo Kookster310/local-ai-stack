@@ -1,0 +1,16 @@
+# OpenCode Scheduled Tasks
+# 
+# Format: minute hour day month weekday command
+# All tasks run as the opencode user
+#
+# Examples:
+#   0 23 * * *  - Daily at 11 PM
+#   0 8 * * *   - Daily at 8 AM
+#   */30 * * *  - Every 30 minutes
+#   0 9 * * 1   - Weekly on Monday at 9 AM
+
+# Nightly reflection and SOUL.md update (11 PM)
+0 23 * * * /workspace/scripts/run-task.sh "Perform nightly reflection: Review today's activities from logs, reflect on what went well and what could improve, then update SOUL.md with insights, learned preferences, and any notable events. Be thoughtful and concise." reflection
+
+# Example: Morning health check (8 AM) - uncomment to enable
+# 0 8 * * * /workspace/scripts/run-task.sh "Morning check: Verify TrueNAS is healthy, check for any failed arr stack imports overnight, report summary." morning-check
