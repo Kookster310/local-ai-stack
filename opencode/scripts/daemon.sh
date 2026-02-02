@@ -8,8 +8,25 @@ set -e
 echo "=== OpenCode Daemon Starting ==="
 echo "Time: $(date)"
 
-# Ensure log directory exists
+# Ensure directories exist
 mkdir -p /workspace/logs
+mkdir -p /workspace/credentials
+
+# Copy credentials and fix permissions (mounted read-only, need writable copy)
+if [ -d /workspace/credentials-mount ]; then
+    echo "Setting up credentials..."
+    cp -r /workspace/credentials-mount/* /workspace/credentials/ 2>/dev/null || true
+    
+    # Fix SSH key permissions
+    if [ -f /workspace/credentials/id_rsa ]; then
+        chmod 600 /workspace/credentials/id_rsa
+        echo "  SSH key ready"
+    fi
+    
+    # Fix any other credential files
+    chmod 600 /workspace/credentials/*.yaml 2>/dev/null || true
+    chmod 600 /workspace/credentials/*.json 2>/dev/null || true
+fi
 
 echo ""
 echo "=== Daemon Ready ==="
