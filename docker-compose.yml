@@ -89,7 +89,7 @@ services:
     environment:
       - MEILI_HOST=http://meilisearch:7700
       - MEILI_NO_ANALYTICS=true
-      - MEILI_MASTER_KEY=${MEILI_MASTER_KEY:-masterKey}
+      - MEILI_MASTER_KEY=${MEILI_MASTER_KEY:-changeme-master-key}
     volumes:
       - ./LibreChat/meili_data_v1.12:/meili_data
     networks:
@@ -100,9 +100,9 @@ services:
     container_name: vectordb
     image: pgvector/pgvector:0.8.0-pg15-trixie
     environment:
-      POSTGRES_DB: mydatabase
-      POSTGRES_USER: myuser
-      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: ${POSTGRES_DB:-mydatabase}
+      POSTGRES_USER: ${POSTGRES_USER:-myuser}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
     restart: always
     volumes:
       - pgdata2:/var/lib/postgresql/data
