@@ -160,7 +160,8 @@ services:
     volumes:
       - ./opencode/opencode.json:/home/opencode/.config/opencode/opencode.json:ro
       - ./opencode/hosts.yaml:/workspace/hosts.yaml:ro
-      - ./opencode/SOUL.md:/workspace/SOUL.md
+      - ./opencode/SOUL.md:/workspace/SOUL.md:ro
+      - ./opencode/SOUL.md.proposals:/workspace/SOUL.md.proposals
       - ./opencode/credentials:/mnt/credentials:ro
       - ./opencode/logs:/workspace/logs
       - ./opencode/cron:/workspace/cron:ro

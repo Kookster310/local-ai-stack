@@ -1,0 +1,34 @@
+# SOUL.md Proposals
+
+This file contains proposed updates to SOUL.md from the agent's nightly reflections.
+Review weekly and merge relevant entries into SOUL.md, then clear this file.
+
+---
+
+## Example Entry Format
+
+### 2026-02-02 - Nightly Reflection
+
+**Section: Learned Preferences**
+```
+- User prefers concise status reports over verbose logs
+```
+
+**Section: Knowledge Base > Common Issues & Solutions**
+```
+### Arr Stack Import Failures
+- Permission issues: Check container user matches media folder ownership
+- Path not found: Verify docker volume mounts in compose file
+```
+
+**Section: Evolution Log**
+```
+### 2026-02-02 - First TrueNAS Connection
+- Successfully connected to TrueNAS via SSH
+- Discovered arr stack runs as Docker containers
+- Learned user prefers aiagent user over root
+```
+
+---
+
+<!-- Agent: Append your proposals below this line -->

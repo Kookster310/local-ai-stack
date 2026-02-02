@@ -6,6 +6,7 @@ hosts.yaml
 
 # Soul - personal agent evolution (use SOUL.md.example as template)
 SOUL.md
+SOUL.md.proposals
 
 # Logs
 logs/

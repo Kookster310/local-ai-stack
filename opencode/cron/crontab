@@ -9,8 +9,8 @@
 #   */30 * * *  - Every 30 minutes
 #   0 9 * * 1   - Weekly on Monday at 9 AM
 
-# Nightly reflection and SOUL.md update (11 PM)
-0 23 * * * /workspace/scripts/run-task.sh "Perform nightly reflection: Review today's activities from logs, reflect on what went well and what could improve, then update SOUL.md with insights, learned preferences, and any notable events. Be thoughtful and concise." reflection
+# Nightly reflection - proposals written to SOUL.md.proposals (11 PM)
+0 23 * * * /workspace/scripts/run-task.sh "Perform nightly reflection: Review today's activities from logs. Reflect on what went well, what could improve, and any patterns noticed. Append your proposals to /workspace/SOUL.md.proposals using the format documented in AGENTS.md. Do NOT modify SOUL.md directly." reflection
 
 # Example: Morning health check (8 AM) - uncomment to enable
 # 0 8 * * * /workspace/scripts/run-task.sh "Morning check: Verify TrueNAS is healthy, check for any failed arr stack imports overnight, report summary." morning-check

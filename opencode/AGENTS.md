@@ -56,19 +56,35 @@ At the start of each session, read SOUL.md to:
 - Check pending tasks from previous sessions
 - Review troubleshooting knowledge
 
-### Writing Memory
-After completing tasks or learning something new, **update SOUL.md** with:
-- New preferences or patterns learned
-- Troubleshooting solutions discovered
-- Task completion summaries
-- Context for follow-up in future sessions
+### Writing Memory - PROPOSALS ONLY
 
-### Update Format
-When updating SOUL.md, add entries to the appropriate sections:
+**DO NOT modify SOUL.md directly.** Instead, append proposals to `/workspace/SOUL.md.proposals`.
+
+The user reviews proposals weekly and merges relevant ones into SOUL.md.
+
+### Proposal Format
+
+When proposing updates, append to SOUL.md.proposals using this format:
+
+```markdown
+### YYYY-MM-DD - Brief Title
+
+**Section: [Section Name]**
+\`\`\`
+Content to add to that section
+\`\`\`
+
+**Section: [Another Section]**
+\`\`\`
+More content
+\`\`\`
+```
+
+### What to Propose
 - **Learned Preferences**: User habits, preferred formats
 - **Knowledge Base**: Troubleshooting notes, infrastructure details
-- **Session Memory > Recent Activities**: Brief task summaries with dates
 - **Evolution Log**: Significant learnings (with date)
+- **Session Memory**: Important context for future sessions
 
 ## Credentials
 

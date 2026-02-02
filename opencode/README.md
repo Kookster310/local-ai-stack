@@ -169,8 +169,19 @@ This allows the agent to improve over time and maintain continuity across sessio
 **Setup**: Copy `SOUL.md.example` to `SOUL.md` to initialize. The actual `SOUL.md` is gitignored since it contains personal agent evolution data.
 
 The agent is instructed (via AGENTS.md) to:
-1. Read SOUL.md at the start of each session
-2. Update it after completing tasks or learning something new
+1. Read SOUL.md at the start of each session (mounted read-only)
+2. Write proposals to `SOUL.md.proposals` (never modify SOUL.md directly)
+
+### Weekly Review Workflow
+
+```bash
+# Review proposals
+cat opencode/SOUL.md.proposals
+
+# Merge relevant entries into SOUL.md manually
+# Then clear the proposals file
+echo "" > opencode/SOUL.md.proposals
+```
 
 ## Volumes
 
