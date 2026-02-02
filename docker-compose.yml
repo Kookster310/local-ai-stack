@@ -162,8 +162,6 @@ services:
       - ./opencode:/workspace
       # OpenCode config
       - ./opencode/opencode.json:/home/opencode/.config/opencode/opencode.json:ro
-      # Credentials mounted separately for permission handling
-      - ./opencode/credentials:/mnt/credentials:ro
       # Timezone
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
