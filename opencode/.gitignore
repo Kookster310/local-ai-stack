@@ -11,6 +11,11 @@ SOUL.md.proposals
 # Logs
 logs/
 
+# Agent-created data (persistent)
+data/
+memory/
+.moltbot/
+
 # Python cache
 __pycache__/
 *.pyc
