@@ -1,3 +1,5 @@
+_Disclaimer: This codebase and documentation is managed via a Large Language Model_
+
 # Local AI Stack
 
 A complete local AI stack that runs AI models locally with Ollama, integrated with the LibreChat frontend.
