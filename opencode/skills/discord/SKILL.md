@@ -15,22 +15,41 @@ Store at `/workspace/credentials/discord-credentials.json`:
 {
   "bot_token": "MTxxxxxxxxxx...",
   "application_id": "123456789012345678",
+  "permissions_integer": "84992",
   "default_guild_id": "123456789012345678",
   "default_channel_id": "123456789012345678"
 }
 ```
+
+### permissions_integer
+
+Optional. Used to generate the bot invite URL. Sum the permission bits you need:
+
+| Permission | Value |
+|------------|-------|
+| View Channels | 1024 |
+| Send Messages | 2048 |
+| Read Message History | 65536 |
+| Embed Links | 16384 |
+| Attach Files | 32768 |
+| Add Reactions | 64 |
+
+**Example:** Read + post + embeds = `1024 + 2048 + 65536 + 16384` = **84992**
+
+Generate the invite URL:
+```bash
+python3 /workspace/scripts/discord-invite-url.py
+```
+Open the printed URL to invite the bot with these permissions.
 
 ## Setup
 
 1. Go to [Discord Developer Portal](https://discord.com/developers/applications)
 2. Create New Application → name it (e.g., "OpenCode Agent")
 3. Go to **Bot** → Create Bot → Copy the **Token**
-4. Go to **OAuth2** → URL Generator:
-   - Scopes: `bot`
-   - Bot Permissions: `Send Messages`, `Read Message History`, `View Channels`
-5. Copy the generated URL and open it to invite the bot to your server
-
-**Get IDs:** Enable Developer Mode in Discord (Settings → Advanced → Developer Mode), then right-click server/channel to copy IDs.
+4. Fill `discord-credentials.json` with `application_id` (Application ID in OAuth2) and `permissions_integer`
+5. Run `python3 /workspace/scripts/discord-invite-url.py` → open the URL to invite the bot
+6. Get **guild_id** and **channel_id**: Enable Developer Mode in Discord, right-click server/channel → Copy ID
 
 ---
 
