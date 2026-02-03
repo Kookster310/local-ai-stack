@@ -1,16 +1,19 @@
-# OpenCode Scheduled Tasks
-# 
-# Format: minute hour day month weekday command
-# All tasks run as the opencode user
-#
-# Examples:
-#   0 23 * * *  - Daily at 11 PM
-#   0 8 * * *   - Daily at 8 AM
-#   */30 * * *  - Every 30 minutes
-#   0 9 * * 1   - Weekly on Monday at 9 AM
+# OpenCode Scheduled Tasks (opencode user)
+# Edit this file, then: docker compose restart opencode-daemon
 
-# Nightly reflection - proposals written to SOUL.md.proposals (11 PM)
+SHELL=/bin/bash
+PATH=/usr/local/bin:/usr/bin:/bin
+HOME=/home/opencode
+MAILTO=""
+WORKSPACE=/workspace
+cd /workspace
+
+# Format: minute hour day month weekday command
+# Examples: 0 23 * * * (11 PM daily), 0 8 * * * (8 AM), */30 * * * * (every 30 min), 0 9 * * 1 (Mon 9 AM)
+
+# Nightly reflection - proposals to SOUL.md.proposals (11 PM)
 0 23 * * * /workspace/scripts/run-task.sh "Perform nightly reflection: Review today's activities from logs. Reflect on what went well, what could improve, and any patterns noticed. Append your proposals to /workspace/SOUL.md.proposals using the format documented in AGENTS.md. Do NOT modify SOUL.md directly." reflection
 
-# Example: Morning health check (8 AM) - uncomment to enable
-# 0 8 * * * /workspace/scripts/run-task.sh "Morning check: Verify TrueNAS is healthy, check for any failed arr stack imports overnight, report summary." morning-check
+# Add your jobs below (or uncomment examples):
+# 0 8 * * * /workspace/scripts/run-task.sh "Morning check: Verify TrueNAS is healthy, check arr stack imports." morning-check
+# 0 */6 * * * /workspace/scripts/run-task.sh "Check Discord for mentions and respond if needed." discord-check

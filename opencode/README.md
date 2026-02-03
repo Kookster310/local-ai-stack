@@ -128,23 +128,36 @@ docker compose stop opencode-daemon
 
 ## Scheduled Tasks (Cron)
 
-The daemon runs cron for scheduled tasks. Edit `cron/crontab` to configure:
+The daemon runs cron as the **opencode** user. Jobs are defined in `cron/crontab`.
 
-```bash
-# Default: Nightly reflection at 11 PM
-0 23 * * * /workspace/scripts/run-task.sh "Perform nightly reflection..." reflection
-
-# Add your own tasks:
-0 8 * * * /workspace/scripts/run-task.sh "Morning health check" morning-check
-```
-
-The container uses your host's timezone (via `/etc/localtime` mount).
-
-After editing the crontab, restart the daemon to apply changes:
+Edit `opencode/cron/crontab` to add or change jobs, then restart:
 
 ```bash
 docker compose restart opencode-daemon
 ```
+
+### Schedule format
+
+`minute hour day month weekday` (same as standard crontab)
+
+| Example     | Meaning          |
+|------------|------------------|
+| `0 23 * * *`  | Daily at 11 PM   |
+| `0 8 * * *`   | Daily at 8 AM    |
+| `*/30 * * * *`| Every 30 minutes |
+| `0 9 * * 1`   | Monday at 9 AM   |
+
+### Verify cron
+
+```bash
+# List installed jobs
+docker exec opencode-daemon crontab -l
+
+# Check task logs
+ls -la opencode/logs/
+```
+
+The container uses your host timezone (via `/etc/localtime` mount).
 
 ## AGENTS.md
 
