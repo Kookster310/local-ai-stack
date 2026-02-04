@@ -12,8 +12,8 @@ cd /workspace
 # Examples: 0 23 * * * (11 PM daily), 0 8 * * * (8 AM), */30 * * * * (every 30 min), 0 9 * * 1 (Mon 9 AM)
 
 # Nightly reflection - proposals to SOUL.md.proposals (11 PM)
-0 23 * * * opencode --yes "Perform nightly reflection: Review today's activities from logs. Reflect on what went well, what could improve, and any patterns noticed. Append your proposals to /workspace/SOUL.md.proposals using the format documented in AGENTS.md. Do NOT modify SOUL.md directly."
+0 23 * * * opencode run "Perform nightly reflection: Review today's activities from logs. Reflect on what went well, what could improve, and any patterns noticed. Append your proposals to /workspace/SOUL.md.proposals using the format documented in AGENTS.md. Do NOT modify SOUL.md directly."
 
 # Add your jobs below (or uncomment examples):
-# 0 8 * * * opencode --yes "Morning check: Verify TrueNAS is healthy, check arr stack imports."
-# 0 */6 * * * opencode --yes "Check Discord for mentions and respond if needed."
+# 0 8 * * * opencode run "Morning check: Verify TrueNAS is healthy, check arr stack imports."
+# 0 */6 * * * opencode run "Check Discord for mentions and respond if needed."
