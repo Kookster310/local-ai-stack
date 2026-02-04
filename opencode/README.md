@@ -26,8 +26,7 @@ opencode/
 │   └── cron-tasks/
 ├── scripts/                # Automation scripts
 │   ├── entrypoint.sh       # Container entrypoint (runs as root)
-│   ├── daemon.sh           # Daemon mode (runs as opencode)
-│   └── run-task.sh         # Execute single task with logging
+│   └── daemon.sh           # Daemon mode (runs as opencode)
 ├── cron/                   # Scheduled tasks
 │   └── crontab             # Cron schedule definition
 └── logs/                   # Task execution logs (gitignored)
@@ -128,7 +127,7 @@ docker compose stop opencode-daemon
 
 ## Scheduled Tasks (Cron)
 
-The daemon runs cron as the **opencode** user. Jobs are defined in `cron/crontab`.
+The daemon runs cron as the **opencode** user. Jobs are defined in `cron/crontab`. Each job runs `opencode --yes "task message"`; the agent logs cron-invoked runs to `logs/cron.log` (see AGENTS.md).
 
 Edit `opencode/cron/crontab` to add or change jobs, then restart:
 

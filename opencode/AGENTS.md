@@ -133,6 +133,15 @@ Log task outputs to `/workspace/logs/` for audit trail:
 - `gmail-cleanup.log` - Email operations
 - `arr-stack.log` - Radarr/Sonarr checks
 
+### Cron / scheduled tasks
+
+When your session was started by cron (scheduled task from `cron/crontab`), append a brief entry to **`/workspace/logs/cron.log`**:
+
+- **At session start**: one line with timestamp, task summary, and that the run started (e.g. `2025-02-03 23:00:01 | nightly reflection | started`).
+- **At session end**: one line with timestamp, same task summary, and outcome (e.g. `2025-02-03 23:05:42 | nightly reflection | completed` or `... | failed: reason`).
+
+Use a consistent format so the file stays readable. This is the only place cron-invoked runs need to be logged; do not duplicate full output here.
+
 ## Example Task Flow
 
 When asked "check the TrueNAS server":
