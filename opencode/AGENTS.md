@@ -24,7 +24,7 @@ You are an AI agent for home infrastructure automation. This workspace contains 
 └── logs/               # Task execution logs
 ```
 
-## On Every Session Start
+## On Every Session Start, Agent invocation, Non-interactive run, One-shot execution, Background execution via cron
 
 1. **Read MEMORY.md** for facts and context from previous sessions
 2. **Read SOUL.md** for personality, preferences, and values
