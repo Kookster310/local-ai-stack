@@ -64,15 +64,20 @@ tasks:
 import yaml
 
 def generate_crontab():
-    """Generate crontab from tasks.yaml"""
+    """Generate crontab from tasks.yaml using modular wrapper"""
     with open('/workspace/cron/tasks.yaml') as f:
         config = yaml.safe_load(f)
     
-    lines = ["# OpenCode Automated Tasks", ""]
+    lines = [
+        "# OpenCode Automated Tasks",
+        "",
+        "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+        ""
+    ]
     
     for name, task in config['tasks'].items():
         lines.append(f"# {task['description']}")
-        lines.append(f"{task['schedule']} {task['command']} >> /workspace/logs/{name}.log 2>&1")
+        lines.append(f"{task['schedule']} /workspace/scripts/run-cron-task.py {name} \"{task['prompt']}\" --log {name}.log")
         lines.append("")
     
     return '\n'.join(lines)
@@ -87,6 +92,28 @@ with open('/workspace/cron/crontab', 'w') as f:
 
 ```bash
 crontab /workspace/cron/crontab
+```
+
+### Using the Modular Wrapper
+
+The `/workspace/scripts/run-cron-task.py` wrapper ensures:
+- Proper context loading (MEMORY.md, SOUL.md, hosts.yaml)
+- Automatic logging to `/workspace/logs/cron.log` as required by AGENTS.md
+- Optional task-specific log files
+- Environment setup for agent execution
+
+**Usage:**
+```bash
+/workspace/scripts/run-cron-task.py <task_name> "<prompt>" [--log <log_file>]
+```
+
+**Examples:**
+```bash
+# Simple task with only cron.log
+/workspace/scripts/run-cron-task.py health-check "Check system health"
+
+# Task with specific log file
+/workspace/scripts/run-cron-task.py email-check "Process emails" --log email-check.log
 ```
 
 ### List Current Tasks
